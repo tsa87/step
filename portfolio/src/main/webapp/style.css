@@ -1,3 +1,7 @@
+a {
+    text-decoration: none;
+}
+
 /*Page level container*/
 body {
   background-color:black;
@@ -38,12 +42,15 @@ body {
 }
 
 .header-container > .title-section {
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+
+.header-container > .title-section > .title {
     font-family: Roboto;
     font-weight: bold;
     font-size: 40px;
     color: white;
-    grid-column-start: 2;
-    grid-column-end: 3;
 }
 
 .header-container > .navigator-section {
@@ -65,7 +72,6 @@ body {
     font-size: 20px;
     font-weight: bold;
     color: white;
-    text-decoration: none;
 }
 
 .header-container > .navigator-section > .header-links:hover {
