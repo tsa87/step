@@ -6,22 +6,27 @@ body {
 .axis-0-grid-container {
     display: grid;
     grid-template-rows: auto auto auto; 
-    background-color: lavender;
-    grid-row-gap: 50px;
+    background-color: black;
+    grid-row-gap: 20px;
 }
 
 /*Section level container*/
 .header-container {
     display: grid;
     grid-template-columns: auto auto auto auto auto auto;
-    background-color: MediumTurquoise;
+    background-color: black;
+    border-bottom-style: solid;
+    border-bottom-color: white;
 }
 
 .header-container > .logo-section {
-    height: 50px;
-    width: 50px;
     grid-column-start: 1;
     grid-column-end: 2;
+}
+
+.header-container > .logo-section > .logo {
+    height: 50px;
+    width: 50px;
 }
 
 .header-container > div {
@@ -33,9 +38,10 @@ body {
 }
 
 .header-container > .title-section {
-    font-size: 40px;
     font-family: Roboto;
     font-weight: bold;
+    font-size: 40px;
+    color: white;
     grid-column-start: 2;
     grid-column-end: 3;
 }
@@ -45,12 +51,46 @@ body {
     grid-template-columns: auto auto auto auto;
     grid-column-start: 3;
     grid-column-end: 6;
+    align-items: center;
 }
 
+.header-container > .navigator-section > .header-links {
+    font-family: Roboto;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+}
 
+.header-container > .navigator-section > .header-links:hover {
+    background-color: white;
+    color: black
+}
 
+.aboutme-container {
+    display: grid;
+    grid-auto-columns: auto auto auto auto auto auto;
+    border-bottom-style: solid;
+    border-bottom-color: white;
+    border-bottom-width: 1px;
+}
 
+.aboutme-container > .subtitle {
+    font-family: Roboto;
+    font-weight: bold;
+    color: white;
+    font-size: 20px;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
 
+.aboutme-container > .text {
+    font-family: Roboto;
+    font-size: 20px;
+    color: white;
+    grid-column-start: 3;
+    grid-column-end: 6;
+}
 
 /*Sub-section level container*/
 .grid-container > .project-item{
