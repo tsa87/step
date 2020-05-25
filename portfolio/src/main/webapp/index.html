@@ -1,42 +1,14 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Tony Shen - Portfolio</title>
-        <link rel="stylesheet" href="style.css">
-        <!--Google Font API-->
-        <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Roboto&effect=anaglyph">
-        <script src="script.js"></script>
-    </head>
-    <body style="page-container">
-        <div class="axis-0-grid-container">
-            <div class="header-container">
+{% extends "layout.html" %}
+{% block heading %} Second Page {% endblock %}
+{% block body %}
+    <div class="aboutme-container">
+        <div class="subtitle">Mission:</div>
+        <div class="text">Create and explore technologies to improve the future of humanity.</div>
+    </div>
 
-                <div class="logo-section">
-                    <img class="logo" src="images/profile.jpg"/>
-                </div>
-
-                <div class="font-effect-anaglyph title-section">Tony Shen</div>
-
-                <div class="navigator-section">  
-                    <a class="font-effect-anaglyph header-links" href="">Projects</a>
-                    <a class="font-effect-anaglyph header-links" href="">CV</a>
-                    <a class="font-effect-anaglyph header-links" href="">Vlog</a>
-                </div>
-
-            </div>
-
-            <div class="aboutme-container">
-                <div class="subtitle">Mission: </div>
-                <div class="text">Create and explore technologies to benefit humanity.</div>
-            </div>
-
-            <div class="grid-container">
-                <div class="project-item">OpenASO</div>
-                <div class="project-item">Salio</div>
-                <div class="project-item">Gpub Realtime</div>
-            </div>
-        </div>
-    </body>
-</html>
+    <div class="grid-container">
+        <div class="project-item">OpenASO</div>
+        <div class="project-item">Salio</div>
+        <div class="project-item">Gpub Realtime</div>
+    </div>
+{% endblock %}

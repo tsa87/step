@@ -54,6 +54,12 @@ body {
     align-items: center;
 }
 
+@media (max-width: 600px) {
+    .header-container > .navigator-section {
+        visibility: hidden;
+    }
+}
+
 .header-container > .navigator-section > .header-links {
     font-family: Roboto;
     font-size: 20px;
