@@ -1,9 +1,181 @@
-#content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
+* {
+    font-family: Roboto;
+    text-decoration: None;
 }
 
-#greeting-container {
-  margin-top: 20px;
+/*Page level container*/
+body {
+  background-color:black;
+}
+
+.axis-0-grid-container {
+    display: grid;
+    grid-template-rows: auto auto auto; 
+    background-color: black;
+    grid-row-gap: 20px;
+}
+
+/*Section level container*/
+.header-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto;
+    background-color: black;
+    border-bottom-style: solid;
+    border-bottom-color: white;
+}
+
+.header-container > .logo-section {
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+.header-container > .logo-section > .logo {
+    height: 50px;
+    width: 50px;
+}
+
+.header-container > div {
+    border: 1px solid rgba(0, 0, 0, 0.8);
+}
+
+.header-container > .logo-section > .logo {
+    border-radius: 50%;
+}
+
+.header-container > .title-section {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    justify-content: center;
+}
+
+.header-container > .title-section > .title {
+    font-family: Roboto;
+    font-weight: bold;
+    font-size: 40px;
+    color: white;
+}
+
+.header-container > .navigator-section {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-column-start: 3;
+    grid-column-end: 6;
+    align-items: center;
+}
+
+@media (max-width: 600px) {
+    .header-container > .navigator-section {
+        visibility: hidden;
+    }
+}
+
+.header-container > .navigator-section > .header-links {
+    font-family: Roboto;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.header-container > .navigator-section > .header-links:hover {
+    background-color: white;
+    color: black
+}
+
+.aboutme-container {
+    display: grid;
+    grid-auto-columns: auto auto auto auto auto auto;
+    border-bottom-style: solid;
+    border-bottom-color: white;
+    border-bottom-width: 1px;
+}
+
+.aboutme-container > .subtitle {
+    font-family: Roboto;
+    font-weight: bold;
+    color: white;
+    font-size: 20px;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+
+.aboutme-container > .text {
+    font-family: Roboto;
+    font-size: 20px;
+    color: white;
+    grid-column-start: 3;
+    grid-column-end: 6;
+}
+
+.grid-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+/*Sub-section level container*/
+.grid-container > .project-item{
+    background: white;
+    width: 250px;
+    height: 400px;
+    border-radius: 2px;
+    padding: 10px;
+    display: grid;
+    grid-template-rows: 50px 50px auto;
+}
+
+.project-title {
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.project-description {
+    font-size: 15px;
+}
+
+.project-image {
+    background-color: orange;
+    width: 100%;
+    height: 100%;
+}
+
+
+.grid-item {
+    background-color: SlateBlue;
+    margin: 20px;
+    padding: 10px;
+    font-size: 30px;
+}
+
+.image-container {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: white;
+}
+
+.image-column {
+    flex: 25%;
+    max-width: 25%;
+    padding: 4px;
+    box-sizing: border-box; 
+}
+
+@media (max-width: 800px) {
+  .image-column {
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+@media (max-width: 600px) {
+  .image-column {
+    flex: 100%;
+    max-width: 100%;
+  }
+}
+
+.image-column > div {
+    background-color: grey;
+    height: 200px;
+    width: 200px;
+    margin: 20px;
 }
