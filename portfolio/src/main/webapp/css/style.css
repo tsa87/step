@@ -27,7 +27,7 @@ body {
     align-items: center;
 
     border-bottom-style: solid;
-    border-bottom-color: black;
+    border-bottom-color: white;
     border-bottom-width: 2px;
 }
 
@@ -46,7 +46,7 @@ body {
 .title {
     font-weight: bold;
     font-size: 40px;
-    color: black;
+    color: white;
 }
 
 .nav-section > * {
@@ -55,16 +55,16 @@ body {
 
 .nav-links {
     font-size: 20px;
-    color: black;
+    color: white;
 }
 
 .title:hover, .nav-links:hover {
     color: white;
-    background-color: black;
+    background-color: white;
 }
 
 .nav-section-mobile {
-    display: none;
+    display: none; 
     position: relative;
     margin-right: 40px;
     align-items: center;
@@ -72,8 +72,14 @@ body {
 
 .dropdown-links {
     display: none;
+
+    /*keep drop down items to the right*/
     position: absolute;
-    background-color: #f9f9f9;
+    left:auto;
+    right:0;
+
+    background-color: white;
+
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     padding: 12px 16px;
@@ -81,7 +87,8 @@ body {
 }
 
 .nav-section-mobile:hover .dropdown-links {
-    display: block;
+    display: flex;
+    flex-direction: column;
 }
 
 @media (max-width: 700px) {
@@ -118,91 +125,3 @@ body {
 .icon:hover {
     opacity: 0.7;
 }
-
-/* Section level container
-.header-container {
-    display: grid;
-    grid-template-columns: auto auto auto auto auto auto;
-    background-color: black;
-    border-bottom-style: solid;
-    border-bottom-color: white;
-}
- */
-
-
-
-
-/* @media (max-width: 600px) {
-    .header-container > .navigator-section {
-        visibility: hidden;
-    }
-}
-
-.header-container > .navigator-section > .header-links {
-    font-family: Roboto;
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-}
-
-.header-container > .navigator-section > .header-links:hover {
-    background-color: white;
-    color: black
-}
-
-.aboutme-container {
-    display: grid;
-    grid-auto-columns: auto auto auto auto auto auto;
-    border-bottom-style: solid;
-    border-bottom-color: white;
-    border-bottom-width: 1px;
-}
-
-.aboutme-container > .subtitle {
-    font-family: Roboto;
-    font-weight: bold;
-    color: white;
-    font-size: 20px;
-    grid-column-start: 2;
-    grid-column-end: 3;
-}
-
-.aboutme-container > .text {
-    font-family: Roboto;
-    font-size: 20px;
-    color: white;
-    grid-column-start: 3;
-    grid-column-end: 6;
-}
-
-
-
-/*Sub-section level container*/
-/* .grid-container > .project-item{
-    
-}
-
-.project-title {
-    font-weight: bold;
-    font-size: 30px;
-}
-
-.project-description {
-    font-size: 15px;
-}
-
-.project-image {
-    background-color: orange;
-    width: 100%;
-    height: 100%;
-}
-
-
-.grid-item {
-    background-color: SlateBlue;
-    margin: 20px;
-    padding: 10px;
-    font-size: 30px;
-}
-
- */
