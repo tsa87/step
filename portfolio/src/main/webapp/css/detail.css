@@ -1,84 +1,68 @@
+/* CSS specific for details.html */
+
 a {
-    font-size: 18px; 
-    overflow-wrap: break-word;
+	font-size: 18px;
+	overflow-wrap: break-word;
 }
-
 body {
-    background-image: url("../images/background.jpg");
-} 
-
+	background-image: url("../images/background.jpg");
+}
 img {
-    width: auto;
-    height: auto;
-    object-fit: cover; 
-} 
-  
+	height: auto;
+	object-fit: cover;
+	width: auto;
+}
 .overview-area {
-    display: flex;
-    flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
-
 @media (max-width: 700px) {
-    .overview-area {
-        flex-wrap: wrap;
-        align-items: center;
-    } 
-    .overview-area > * {
-        width: 100%;
-    }
+	.overview-area {
+		align-items: center;
+		flex-wrap: wrap;
+	}
+	.overview-area > * {
+		width: 100%;
+	}
 }
-
 .image {
-    display: flex;
-    flex-direction: column; 
+	display: flex;
+	flex-direction: column;
 }
-
 .image > * {
-    margin: 10px;
+	margin: 10px;
 }
-
-
 .button-section {
-    display: flex;
-    justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }
-
 .button {
-    text-align: center;
-    padding: 10px;
-    margin: 10px;
-    
-    border-radius: 10px;
-
-    font-family: Roboto;
-    color: white;
-
-    background-color: gray;
+	background-color: gray;
+	border-radius: 10px;
+	color: white;
+	font-family: Roboto;
+	margin: 10px;
+	padding: 10px;
+	text-align: center;
 }
-
 .picture {
-    height: 600px;
-    width: 350px;
-    background-color: blue;
-    flex-shrink: 0
+	background-color: blue;
+	flex-shrink: 0;
+	height: 600px;
+	width: 350px;
 }
-
 .description {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+	align-items: flex-start;
+	display: flex;
+	flex-direction: column;
 }
-
-.description > * { 
-    overflow-wrap: break-word;
-    margin: 5px;
-} 
-
+.description > * {
+	margin: 5px;
+	overflow-wrap: break-word;
+}
 .detail-section {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%; 
+	align-items: flex-start;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
 }
-
-
