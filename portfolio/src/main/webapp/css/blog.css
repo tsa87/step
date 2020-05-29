@@ -1,1 +1,26 @@
 /* CSS specific for blog.html */
+h3, p {
+    color: white;
+}
+.blog-container {
+    border-bottom-color: white;
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
+    display: flex;
+    flex-wrap: wrap;
+    left: 110px;
+	position: relative;
+}
+.directory-section {
+    border-right-color: white;
+	border-right-style: dashed;
+	border-right-width: 2px;
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+}
+.blog-section {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}

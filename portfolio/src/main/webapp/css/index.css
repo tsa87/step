@@ -11,6 +11,9 @@ img {
 	object-fit: scale-down;
 }
 .project-section {
+    border-bottom-color: white;
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
 	display: flex;
 	flex-direction: column;
 	left: 110px;
@@ -28,13 +31,16 @@ img {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	height: 540px;
+	height: 580px;
 	justify-content: center;
 	overflow: hidden;
 }
 .project-item {
 	background-color: white;
 	border-radius: 10px;
+    border-color: gray;
+    border-width: 10px;
+    border-style: solid;
 	display: flex;
 	flex-direction: column;
 	height: 500px;
@@ -50,6 +56,20 @@ img {
 .project-item img {
 	border-radius: 10px;
 	width: 90%;
+}
+.experience-flex {
+    align-items: center;
+    display: flex;
+	flex-direction: column;
+}
+.experience-item img {
+    border-radius: 10%;
+    border-color: gray;
+    border-width: 10px;
+    border-style: solid;
+    object-fit: cover;
+    height: 300px;
+    width: 500px; 
 }
 .badge-section {
 	display: flex;
