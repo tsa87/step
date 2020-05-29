@@ -4,8 +4,8 @@ a {
 	font-size: 18px;
 	overflow-wrap: break-word;
 }
-body {
-	background-image: url("../images/background.jpg");
+.overview-area, .detail-section {
+    background-color: white;
 }
 img {
 	height: auto;

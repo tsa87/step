@@ -1,31 +1,15 @@
 /* CSS specific for images.html */
 
 .image-container {
-	background-color: white;
 	display: flex;
 	flex-wrap: wrap;
+    left: 110px;
+    position: relative; 
 }
-.image-column {
-	box-sizing: border-box;
-	flex: 25%;
-	max-width: 25%;
-	padding: 4px;
-}
-@media (max-width: 800px) {
-	.image-column {
-		flex: 50%;
-		max-width: 50%;
-	}
-}
-@media (max-width: 600px) {
-	.image-column {
-		flex: 100%;
-		max-width: 100%;
-	}
-}
-.image-column > div {
-	background-color: grey;
-	height: 200px;
-	margin: 20px;
-	width: 200px;
+
+.image-container > img {
+    height: 400px;
+    margin: 20px;
+    object-fit: cover;
+    width: 400px; 
 }

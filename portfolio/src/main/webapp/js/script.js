@@ -13,6 +13,19 @@
 // limitations under the License.
 
 /**
+ * Inject HTML template code.
+ */
+function html_inject(templatePath, htmlTarget) {
+    fetch(templatePath)
+        .then(response => {
+            return response.text();
+        })
+        .then(text => {
+            document.querySelector(htmlTarget).innerHTML = text;
+        }) 
+}
+
+/**
  * Adds a random greeting to the page.
  */
 function addRandomGreeting() {
@@ -24,5 +37,8 @@ function addRandomGreeting() {
 
   // Add it to the page.
   const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+  greetingContainer.innerHTML = greeting;
 }
+
+html_inject('../header.html', ".meta-header");
+html_inject('../footer.html', ".footer");

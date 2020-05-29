@@ -4,7 +4,7 @@
 	text-decoration: None;
 }
 body {
-	background-color: white;
+	background-image: linear-gradient(to top, #0ba360 0%, #3cba92 100%);
 }
 .meta-header {
 	display: flex;
@@ -66,6 +66,7 @@ body {
 	z-index: 1;
 }
 .nav-section-mobile:hover .dropdown-links {
+    background-color: black;
 	display: flex;
 	flex-direction: column;
 }
@@ -76,6 +77,21 @@ body {
 	.nav-section-mobile {
 		display: inline-block;
 	}
+}
+.greating-container {
+    color: white;
+	font-size: 20px;
+}
+.aboutme-section {
+	border-bottom-color: white;
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
+	display: flex;
+	position: relative;
+}
+.aboutme-section > * {
+	color: white;
+	margin-right: 20px;
 }
 .footer {
 	display: flex;
