@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 /**
  * Adds a random greeting to the page.
  */
@@ -23,6 +24,80 @@ function addRandomGreeting() {
   const greeting = greetings[Math.floor(Math.random() * greetings.length)];
 
   // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+  const greetingContainer = document.querySelector('.greeting-container');
+  greetingContainer.innerHTML = greeting;
 }
+
+
+function myTimer() {
+  var d = new Date();
+  document.querySelector("#time").innerHTML = d.toLocaleTimeString();
+}
+
+function compareString(a, b) {
+    if (a.length !== b.length){
+      return false;
+    }
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) {
+        return false;
+      }
+    }
+    return true;
+}
+
+const stumbleBuildString = (stringTarget, htmlTarget) => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const vocabSize = characters.length;
+
+    let currentString = document.querySelector('#mission').innerText;
+    const currentStringLength = currentString.length
+
+    const randomChar = characters[Math.floor(Math.random() * vocabSize)];
+
+    let match = compareString(stringTarget, currentString);
+    if (!match) {
+        if ((currentStringLength === 0) || (currentString.substr(currentStringLength-1, 1) === stringTarget.substr(currentStringLength - 1, 1))) {
+            currentString = currentString + randomChar;
+        }
+        else {        
+            currentString = currentString.substr(0, currentStringLength-1)  + randomChar;
+        }
+    }
+    document.querySelector('#mission').innerHTML = currentString;
+} 
+
+
+/**
+ * Inject HTML template code.
+ */
+function htmlInject(templatePath, htmlTarget) {
+    return fetch(templatePath)
+        .then(response => {
+            return response.text();
+        })
+        .then(text => {
+            document.querySelector(htmlTarget).innerHTML = text;
+        }) 
+}
+
+htmlInject('../header.html', ".meta-header")
+    .then(() => {
+        return htmlInject('../footer.html', ".footer")
+    })
+    .then(() => {
+        return setInterval(addRandomGreeting, 1000);
+    })
+    .then(() => {
+        return setInterval(myTimer, 1000);
+    })
+    .then(() => {
+        return setInterval(() => stumbleBuildString('MISSION', "#mission"), 50)
+    })
+
+
+
+
+
+
+

@@ -1,127 +1,105 @@
-h3, h2, p {
-    color: white;
-}
+/* CSS specific for index.html */
 
-body {
-    background-image: linear-gradient(to top, #0ba360 0%, #3cba92 100%);
-} 
+h3, h2, p {
+	color: white;
+}
 
 img {
-    height: 100%;
-
-    max-width: 100%;
-    max-height: 100%;
-
-    object-fit: scale-down;
+	height: 100%;
+	max-height: 100%;
+	max-width: 100%;
+	object-fit: scale-down;
 }
-
-.aboutme-section {
-    display: flex;
-    position: relative;
-
-    border-bottom-style: solid;
-    border-bottom-color: white;
-    border-bottom-width: 2px;
-}
- 
-.aboutme-section > * {
-    margin-right: 20px;
-    color: white;
-}
-
 .project-section {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    left: 110px;
+    border-bottom-color: white;
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
+	display: flex;
+	flex-direction: column;
+	left: 110px;
+	position: relative;
 }
-
 .project-flex h3, h2, p {
-    color: black;
+	color: black;
 }
-
 @media (max-width: 1000px) {
-    .project-section {
-        left: 10px;
-    }
+	.project-section {
+		left: 10px;
+	}
 }
-
 .project-flex {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    flex-wrap: wrap;
-
-    height: 540px;
-    overflow: hidden;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	height: 580px;
+	justify-content: center;
+	overflow: hidden;
 }
-
 .project-item {
-    margin-right: 40px;
-    margin-bottom: 100px;
-
-    width: 350px;
-    height: 500px;
-
-    padding: 20px;
-
-    background-color: white;
-    border-radius: 10px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+	background-color: white;
+	border-radius: 10px;
+    border-color: gray;
+    border-width: 10px;
+    border-style: solid;
+	display: flex;
+	flex-direction: column;
+	height: 500px;
+	justify-content: center;
+	margin-bottom: 100px;
+	margin-right: 40px;
+	padding: 20px;
+	width: 350px;
 }
- 
 .project-item > * {
-    margin: 5px;
+	margin: 5px;
 }
-
 .project-item img {
-    border-radius: 10px;
-    width: 90%;
+	border-radius: 10px;
+	width: 90%;
 }
-
-
+.experience-flex {
+    align-items: center;
+    display: flex;
+	flex-direction: column;
+}
+.experience-item img {
+    border-radius: 10%;
+    border-color: gray;
+    border-width: 10px;
+    border-style: solid;
+    object-fit: cover;
+    height: 300px;
+    width: 500px; 
+}
 .badge-section {
-    display: flex;
-    justify-content: space-around;
+	display: flex;
+	justify-content: space-around;
 }
-
 .pill {
-    color: white;
-    font-weight: bold;
-    font-size: 15px;
-
-    text-align: center;
-    padding: 10px 20px; 
-
-    background-image: linear-gradient(to right, #f78ca0 0%, #f9748f 19%, #fd868c 60%, #fe9a8b 100%);
-    border-radius: 16px;
-} 
-
+	background-image: linear-gradient(to right, #f78ca0 0%, #f9748f 19%, #fd868c 60%, #fe9a8b 100%);
+	border-radius: 16px;
+	color: white;
+	font-size: 15px;
+	font-weight: bold;
+	padding: 10px 20px;
+	text-align: center;
+}
 .demo-section {
-    width: 320px;
-    height: 275px;
-
-    display: flex;
-    justify-content: space-around;
+	display: flex;
+	height: 275px;
+	justify-content: space-around;
+	width: 320px;
 }
-
 .button-section {
-    display: flex;
-    justify-content: space-around;
+	display: flex;
+	justify-content: space-around;
 }
-
 .button {
-    text-align: center;
-    padding: 10px; 
-    margin: 10px;
-
-    border-radius: 10px;
-
-    font-family: Roboto;
-    color: white;
-
-    background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+	background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+	border-radius: 10px;
+	color: white;
+	font-family: Roboto;
+	margin: 10px;
+	padding: 10px;
+	text-align: center;
 }
