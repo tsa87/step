@@ -4,7 +4,7 @@
 	text-decoration: None;
 }
 body {
-	background-image: linear-gradient(to top, #0ba360 0%, #3cba92 100%);
+	background-image: linear-gradient(225deg, #473B7B 0%, #3584A7 51%, #30D2BE 100%);
 }
 .meta-header {
 	display: flex;
@@ -71,17 +71,22 @@ body {
 	z-index: 1;
 }
 .nav-section-mobile:hover .dropdown-links {
-    background-color: black;
 	display: flex;
 	flex-direction: column;
 }
-@media (max-width: 700px) {
+@media (max-width: 1000px) {
 	.nav-section {
 		display: none !important;
 	}
 	.nav-section-mobile {
 		display: inline-block;
 	}
+    .greeting-container {
+        display: none !important;
+    }
+    .time {
+        display: none !important;
+    }
 }
 .greeting-container {
     color: white;

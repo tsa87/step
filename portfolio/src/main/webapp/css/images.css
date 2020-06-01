@@ -1,5 +1,7 @@
 /* CSS specific for images.html */
-
+h3, h1, a, p {
+    color: white;
+}
 .image-container {
 	display: flex;
 	flex-wrap: wrap;
