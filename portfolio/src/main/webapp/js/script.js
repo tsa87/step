@@ -17,22 +17,21 @@
  * Adds a random greeting to the page.
  */
 function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
-
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-  // Add it to the page.
-  const greetingContainer = document.querySelector('.greeting-container');
-  greetingContainer.innerHTML = greeting;
+  fetch("/random-greet")
+    .then((response) => response.text())
+    .then((greet) => {
+        document.querySelector('.greeting-container').innerHTML = greet;
+    })
 }
 
-
+/**
+ * Show user the local time 
+ */
 function myTimer() {
   var d = new Date();
   document.querySelector("#time").innerHTML = d.toLocaleTimeString();
 }
+
 
 function compareString(a, b) {
     if (a.length !== b.length){
@@ -46,6 +45,9 @@ function compareString(a, b) {
     return true;
 }
 
+/**
+ * Build a text string one by one
+ */
 const stumbleBuildString = (stringTarget, htmlTarget) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const vocabSize = characters.length;
@@ -81,19 +83,22 @@ function htmlInject(templatePath, htmlTarget) {
         }) 
 }
 
-htmlInject('../header.html', ".meta-header")
-    .then(() => {
-        return htmlInject('../footer.html', ".footer")
-    })
-    .then(() => {
-        return setInterval(addRandomGreeting, 1000);
-    })
-    .then(() => {
-        return setInterval(myTimer, 1000);
-    })
-    .then(() => {
-        return setInterval(() => stumbleBuildString('MISSION', "#mission"), 50)
-    })
+function onload() {
+    htmlInject('../header.html', ".meta-header")
+        .then(() => {
+            return htmlInject('../footer.html', ".footer")
+        })
+        .then(() => {
+            return setInterval(addRandomGreeting, 1000);
+        })
+        .then(() => {
+            return setInterval(myTimer, 1000);
+        })
+        .then(() => {
+            return setInterval(() => stumbleBuildString('MISSION', "#mission"), 50)
+        })
+}
+
 
 
 
