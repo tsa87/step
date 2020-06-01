@@ -39,7 +39,7 @@ img {
 	background-color: white;
 	border-radius: 10px;
     border-color: gray;
-    border-width: 10px;
+    border-width: 2px;
     border-style: solid;
 	display: flex;
 	flex-direction: column;
@@ -65,7 +65,7 @@ img {
 .experience-item img {
     border-radius: 10%;
     border-color: gray;
-    border-width: 10px;
+    border-width: 2px;
     border-style: solid;
     object-fit: cover;
     height: 300px;
