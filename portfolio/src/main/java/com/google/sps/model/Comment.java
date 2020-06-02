@@ -15,10 +15,20 @@ public class Comment {
         this.like = 0; 
     }
 
-    public void like() { this.like ++; }
+    public void like() { 
+        this.like ++;
+    }
 
-    public String getContent() { return this.content; }
-    public String getUserName() { return this.userName; }
-    public Date getTime() { return this.time; }
-    public int getLike() { return this.like; }
+    public String getContent() { 
+        return this.content; 
+    }
+    public String getUserName() {
+        return this.userName; 
+    }
+    public Date getTime() { 
+        return this.time; 
+    }
+    public int getLike() { 
+        return this.like; 
+    }
 }

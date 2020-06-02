@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 public class CommentManager {
-    private List<Comment> commentList = new ArrayList<>();
+    private List<Comment> commentList; 
 
     public List<Comment> getCommentList() {
         return commentList;
@@ -19,7 +18,9 @@ public class CommentManager {
     /* Singleton Support */
     private static CommentManager commentManager; 
 
-    private CommentManager()  {}
+    private CommentManager()  {
+        commentList = new ArrayList<>();
+    }
 
     public static CommentManager getInstance() {
         if (commentManager == null) {

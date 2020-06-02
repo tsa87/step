@@ -2,7 +2,6 @@ package com.google.sps.servlets;
  
 import com.google.sps.model.CommentManager;
 import com.google.sps.model.Comment;
- 
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
- 
  
 @WebServlet("/comment")
 public class CommentServlet extends HttpServlet {
@@ -52,8 +50,9 @@ public class CommentServlet extends HttpServlet {
 
     private String getParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);
-        return (value == null) ? defaultValue : value;
-    }
+        value = (value == null) ? defaultValue : value;
+        return value;
+    }   
 }
  
 
