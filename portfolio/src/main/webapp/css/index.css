@@ -1,9 +1,10 @@
 /* CSS specific for index.html */
-
+body {
+	background-image: linear-gradient(225deg, #473B7B 0%, #3584A7 51%, #30D2BE 100%);
+}
 h3, h2, p {
 	color: white;
 }
-
 img {
 	height: 100%;
 	max-height: 100%;
@@ -13,11 +14,12 @@ img {
 .project-section {
     border-bottom-color: white;
 	border-bottom-style: solid;
-	border-bottom-width: 2px;
+	border-bottom-width: 5px;
 	display: flex;
 	flex-direction: column;
 	left: 110px;
 	position: relative;
+    width: 100%;
 }
 .project-flex h3, h2, p {
 	color: black;
@@ -74,15 +76,6 @@ img {
 .badge-section {
 	display: flex;
 	justify-content: space-around;
-}
-.pill {
-	background-image: linear-gradient(to right, #f78ca0 0%, #f9748f 19%, #fd868c 60%, #fe9a8b 100%);
-	border-radius: 16px;
-	color: white;
-	font-size: 15px;
-	font-weight: bold;
-	padding: 10px 20px;
-	text-align: center;
 }
 .demo-section {
 	display: flex;

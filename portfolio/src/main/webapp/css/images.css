@@ -1,17 +1,24 @@
 /* CSS specific for images.html */
+body {
+	background-image: linear-gradient(225deg, #473B7B 0%, #3584A7 51%, #30D2BE 100%);
+}
 h3, h1, a, p {
     color: white;
 }
 .image-container {
+    border-bottom-color: white;
+	border-bottom-style: solid;
+	border-bottom-width: 5px;
 	display: flex;
 	flex-wrap: wrap;
     left: 110px;
+    margin-bottom: 10px;
     position: relative; 
 }
-
 .image-container > img {
-    height: 400px;
+    border-radius: 10px;
+    height: 300px;
     margin: 20px;
     object-fit: cover;
-    width: 400px; 
+    width: 300px; 
 }

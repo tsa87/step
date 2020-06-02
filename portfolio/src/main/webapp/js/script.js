@@ -33,6 +33,51 @@ function myTimer() {
 }
 
 
+/**
+ *
+ */
+function showComments() {
+    fetch("/comment")
+        .then((response) => response.json())
+        .then(renderComments);
+}
+
+function renderComments(comments) {
+    const commentContainer = document.getElementById('comment-section');
+    commentContainer.innerHTML = "";
+
+    for (var i = 0; i < comments.length; i++) {
+        commentContainer.appendChild(
+            createCommentItem(comments[i])
+        );
+    }
+}
+
+
+function createCommentItem(comment) {
+    const commentItem = document.createElement('div');
+    
+    const authorElement = document.createElement('h4');
+    authorElement.innerText = "Author: " + comment.userName;
+
+    const timeElement = document.createElement('h5');
+    timeElement.innerHTML = "Time: " + comment.time;
+
+    const likeElement = document.createElement('h5');
+    likeElement.innerHTML = comment.like + " like(s)";
+
+    const contentElement = document.createElement('p');
+    contentElement.innerHTML = comment.content;
+
+    commentItem.appendChild(authorElement);
+    commentItem.appendChild(timeElement);
+    commentItem.appendChild(likeElement);
+    commentItem.appendChild(contentElement);
+
+    return commentItem;
+}
+
+
 function compareString(a, b) {
     if (a.length !== b.length){
       return false;
@@ -44,6 +89,7 @@ function compareString(a, b) {
     }
     return true;
 }
+
 
 /**
  * Build a text string one by one
@@ -57,8 +103,7 @@ const stumbleBuildString = (stringTarget, htmlTarget) => {
 
     const randomChar = characters[Math.floor(Math.random() * vocabSize)];
 
-    let match = compareString(stringTarget, currentString);
-    if (!match) {
+    if (!(compareString(stringTarget, currentString))){
         if ((currentStringLength === 0) || (currentString.substr(currentStringLength-1, 1) === stringTarget.substr(currentStringLength - 1, 1))) {
             currentString = currentString + randomChar;
         }
@@ -83,21 +128,21 @@ function htmlInject(templatePath, htmlTarget) {
         }) 
 }
 
-function onload() {
-    htmlInject('../header.html', ".meta-header")
-        .then(() => {
-            return htmlInject('../footer.html', ".footer")
-        })
-        .then(() => {
-            return setInterval(addRandomGreeting, 1000);
-        })
-        .then(() => {
-            return setInterval(myTimer, 1000);
-        })
-        .then(() => {
-            return setInterval(() => stumbleBuildString('MISSION', "#mission"), 50)
-        })
-}
+
+htmlInject('../header.html', ".meta-header")
+    .then(() => {
+        return htmlInject('../footer.html', ".footer")
+    })
+    .then(() => {
+        return setInterval(addRandomGreeting, 1000);
+    })
+    .then(() => {
+        return setInterval(myTimer, 1000);
+    })
+    .then(() => {
+        return setInterval(() => stumbleBuildString('MISSION', "#mission"), 50)
+    })
+
 
 
 

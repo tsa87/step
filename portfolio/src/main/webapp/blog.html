@@ -16,7 +16,7 @@
         <script src="js/script.js"></script>
     </head>   
     </head> 
-    <body>      
+    <body onload="showComments()">      
         <div class="meta-header"></div>
         <div class="blog-container">
             <div class="directory-section">
@@ -26,8 +26,20 @@
             </div>
             <div class="blog-section">
                 <div id="20200529">
-                    <h3>My experience in STEP</h3>
-                    <p>I am not much of a blog writer, but the experience has been good.</p>
+                    <h3>Google STEP 20' Internship</h3>
+                    <p>
+                        This summer, I am interning at the Google ranking team.
+                        My project includes this website and a capstone project.
+                        Currently, I am working to build a comment section on my website.
+                    </p> 
+                    <form action="/comment" method="POST">
+                        <textarea name="text-name">Username</textarea>
+                        <textarea name="text-comment">Enter your comment here...</textarea>
+
+                        <input type="checkbox" name="anonymous" value="true">Anonymous</input>
+                        <input type="submit" value="Submit">
+                    </form>
+                    <div id="comment-section"></div>                    
                 </div>
             </div>
         </div>
