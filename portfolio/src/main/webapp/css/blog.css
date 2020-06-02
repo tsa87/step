@@ -2,14 +2,13 @@
 body {
 	background-image: linear-gradient(225deg, #473B7B 0%, #3584A7 51%, #30D2BE 100%);
 }
-a {
+h4, h5, p, a {
     color: black;
+}
+a {
     font-size: 18px;
     font-weight: bold;
     text-decoration: None;
-}
-h4, h5, p {
-    color: black;
 }
 .blog-container {
     background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);

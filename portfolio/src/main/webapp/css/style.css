@@ -1,5 +1,6 @@
 /* Contains the styling that applies to all pages" */
 body {
+    background-image: linear-gradient(225deg, #473B7B 0%, #3584A7 51%, #30D2BE 100%);
     margin: 0px;
     overflow-x: hidden; 
     padding: 0px;  
