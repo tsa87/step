@@ -10,6 +10,7 @@ h3, h1, a, p {
 	flex-wrap: wrap;
     left: 110px;
     margin-bottom: 10px;
+    max-width: 90%;
     position: relative; 
 }
 .image-container > img {

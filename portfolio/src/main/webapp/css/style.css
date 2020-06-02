@@ -1,13 +1,13 @@
 /* Contains the styling that applies to all pages" */
 body {
-    background-image: linear-gradient(225deg, #473B7B 0%, #3584A7 51%, #30D2BE 100%);
+    background-image: linear-gradient(to top, #a7a6cb 0%, #8989ba 52%, #8989ba 100%);
     margin: 0px;
     overflow-x: hidden; 
     padding: 0px;  
     width: 100%;
 }
 * {
-	font-family: Roboto;
+	font-family: Karla;
 	text-decoration: None;
 }
 .meta-header {
@@ -51,6 +51,26 @@ body {
     color: white;
     font-size: 1.17em;
     font-weight: bold;
+}
+/* https://css-tricks.com/snippets/css/typewriter-effect/ */
+.css-typing h2 {
+  color: white;   
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  border-right: .15em solid orange; /* The typwriter cursor */
+  white-space: nowrap; /* Keeps the content on a single line */
+  letter-spacing: .15em; /* Adjust as needed */
+  animation: typing 5s steps(40, end), blink-caret .75s step-end infinite;
+  animation-fill-mode: forwards;
+}
+/* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: orange; }
 }
 .nav-section > * {
 	margin-right: 40px;

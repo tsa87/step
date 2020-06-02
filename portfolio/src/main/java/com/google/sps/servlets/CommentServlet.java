@@ -2,6 +2,9 @@ package com.google.sps.servlets;
  
 import com.google.sps.model.CommentManager;
 import com.google.sps.model.Comment;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,9 +30,16 @@ public class CommentServlet extends HttpServlet {
         String content = getParameter(request, "text-comment", "this message was empty...");
         String userName = getParameter(request, "text-name", "anonymous");
         boolean isAnonymous = Boolean.parseBoolean(getParameter(request, "anonymous", "false"));
+        long timestamp = System.currentTimeMillis();
         userName = isAnonymous ? "anonymous" : userName;
 
-        commentManager.addComment(new Comment(userName, content));
+        Entity commentEntity = new Entity("Comment");
+        commentEntity.setProperty("userName", userName);
+        commentEntity.setProperty("content", content);
+        commentEntity.setProperty("like", 0);
+        commentEntity.setProperty("time", timestamp);
+
+        // commentManager.addComment(new Comment(userName, content));
         
         response.sendRedirect("/blog.html");
     }
