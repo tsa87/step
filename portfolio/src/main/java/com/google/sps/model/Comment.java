@@ -1,18 +1,16 @@
 package com.google.sps.model;
 
-import java.util.Date;
-
 public class Comment {
     private String content;
     private String userName;
-    private Date time;
-    private int like;
+    private long time;
+    private long like;
 
-    public Comment(String userName, String content) {
+    public Comment(String userName, String content, long time, long like) {
         this.content = content;
         this.userName = userName;
-        this.time = new Date();
-        this.like = 0; 
+        this.time = time;
+        this.like = like; 
     }
 
     public void like() { 
@@ -25,10 +23,10 @@ public class Comment {
     public String getUserName() {
         return this.userName; 
     }
-    public Date getTime() { 
+    public long getTime() { 
         return this.time; 
     }
-    public int getLike() { 
+    public long getLike() { 
         return this.like; 
     }
 }

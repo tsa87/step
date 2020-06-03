@@ -1,11 +1,8 @@
 package com.google.sps.servlets;
  
-import com.google.sps.model.CommentManager;
-import com.google.sps.model.Comment;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,48 +11,28 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
  
-@WebServlet("/comment")
-public class CommentServlet extends HttpServlet {
- 
-    private CommentManager commentManager;
- 
-    @Override
-    public void init() {
-        commentManager = CommentManager.getInstance();
-    }
- 
+@WebServlet("/new-comments")
+public class NewCommentsServlet extends HttpServlet {
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         
         String content = getParameter(request, "text-comment", "this message was empty...");
         String userName = getParameter(request, "text-name", "anonymous");
         boolean isAnonymous = Boolean.parseBoolean(getParameter(request, "anonymous", "false"));
-        long timestamp = System.currentTimeMillis();
+        long time = System.currentTimeMillis();
         userName = isAnonymous ? "anonymous" : userName;
 
         Entity commentEntity = new Entity("Comment");
         commentEntity.setProperty("userName", userName);
         commentEntity.setProperty("content", content);
+        commentEntity.setProperty("timestamp", time);
         commentEntity.setProperty("like", 0);
-        commentEntity.setProperty("time", timestamp);
-
-        // commentManager.addComment(new Comment(userName, content));
+       
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(commentEntity);
         
         response.sendRedirect("/blog.html");
-    }
-
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String json = convertToJson(commentManager);
- 
-        response.setContentType("application/json;");
-        response.getWriter().println(json);
-    }
- 
-    private String convertToJson(CommentManager commentManager) {
-        Gson gson = new Gson();
-        String json = gson.toJson(commentManager.getCommentList());
-        return json;
     }
 
     private String getParameter(HttpServletRequest request, String name, String defaultValue) {

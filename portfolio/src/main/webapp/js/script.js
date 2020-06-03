@@ -12,18 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-/**
- * Adds a random greeting to the page.
- */
-function addRandomGreeting() {
-  fetch("/random-greet")
-    .then((response) => response.text())
-    .then((greet) => {
-        document.querySelector('.greeting-container').innerHTML = greet;
-    })
-}
-
 /**
  * Show user the local time 
  */
@@ -32,27 +20,22 @@ function myTimer() {
   document.querySelector("#time").innerHTML = d.toLocaleTimeString();
 }
 
-
-/**
- *
- */
 function showComments() {
-    fetch("/comment")
-        .then((response) => response.json())
+    fetch("/list-comments")
+        .then(response => response.json())
         .then(renderComments);
 }
 
 function renderComments(comments) {
     const commentContainer = document.getElementById('comment-section');
     commentContainer.innerHTML = "";
-
+    
     for (var i = 0; i < comments.length; i++) {
         commentContainer.appendChild(
             createCommentItem(comments[i])
         );
     }
 }
-
 
 function createCommentItem(comment) {
     const commentItem = document.createElement('div');
@@ -134,20 +117,9 @@ htmlInject('../header.html', ".meta-header")
         return htmlInject('../footer.html', ".footer")
     })
     .then(() => {
-        return setInterval(addRandomGreeting, 1000);
-    })
-    .then(() => {
         return setInterval(myTimer, 1000);
     })
     .then(() => {
         return setInterval(() => stumbleBuildString('MISSION', "#mission"), 50)
     })
-
-
-
-
-
-
-
-
 
