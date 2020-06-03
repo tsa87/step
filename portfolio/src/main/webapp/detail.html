@@ -1,84 +1,67 @@
 <!-- html for openASO project detail -->
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Tony Shen - OpenASO</title>
-        <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="css/detail.css">
-        <!--Google Font API-->
-        <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Karla&effect=anaglyph">
-        <!--Social Media Links--> 
-        <link rel="stylesheet" 
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <script src="js/script.js"></script>
-    </head>   
-    <body>      
-        <div class="meta-header"></div>   
-
-        <div class="overview-area">
-            <div class ="image-section">  
-                <img class="image" src="images/gene.png"/>
-                <a>Training data for the Machine Learning model</a>
-            </div>
-            <div class="description">   
-                <h1>Open ASO</h1>     
-                 
-                <div class="button-section">
-                    <a href="https://github.com/lackeylela/openASO" class="button">View Code</a>
-                    <a href="https://www.youtube.com/watch?v=R_cInFwL2ig" class="button">View Video</a>
-                </div>   
- 
-                <h3>Motivation: </h3>
-                <a> 
-                    Antisense oligonucleotides (ASOs) have a high potential therapeutic value as they can be used to target any transcript and regulate its expression.
-                    Can machine learning be used to identify aspects of RNA targets that make antisense oligonucleotide (ASOs) more effective? 
-                </a> 
-                <h3>Overview: </h3>
-                <a>
-                    In this project, I experimented with various machine learning models (CNN, SVM) on a short sequence of nucleotide pairs to predict ASO efficiency.
-                    In addition, I used Grad-CAM to explain the weights of a trained CNN model and determine the importance of each position in the nucleotide pairs sequence.
-                </a>
-                <h3>Background:</h3>
-                <a>
-                    This project happened in HackSeqRNA 2020 in a team led by Lela Lackey. 
-                    I was a member of the Machine Learning team with Alex Sweeten and Shawn Hsueh.
-                </a>
-            </div>
-        </div>     
-
-        <div class="detail-section">
-            <h3>Method</h3>
-            <ol>
-                <h3><li>Support Vector Machine (SVM)</li></h3>
-                    <ul>
-                        <a> 
-                        As a baseline model, I used scikit learn's built in SVM and achieved a mean squared error of 0.0726.
-                        </a>
-                    </ul>
-                <h3><li>2D-Convolution</li></h3>
-                    <ul>
-                        <a>
-                        Each genetic sequence was converted into a bitmap. 
-                        I implemented a 3-layer cnvolution neural network using Keras,
-                        and achieved a mean squared error of 0.0645.
-                        </a>
-                    </ul>
-                <h3><li>1D-Convolution</li></h3>
-                    <ul>
-                        <a>
-                        Eventually, I encoded the nucleotide base sequence into a 1-D sequence with depth=4.
-                        (Each depth represents one of ATGC)
-                        This better encoding further reduced the mean squared error to 0.0496.
-                        </a>
-                    </ul>
-                <h3><li>Interpretability using Grad-CAM</li></h3>
-                    <ul>
-                        <img class="image" src="images/openASO_Conv.png" />
-                    </ul>
-            </ol>
-        </div> 
-
-        <div class="footer"></div>
-    </body> 
+  <head>
+    <title>Tony Shen - OpenASO</title>
+    <link rel="stylesheet" href="css/detail.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/script.js"></script>
+  </head>
+  <body>
+    <div class="meta-header"></div>
+    <div class="overview-area">
+      <div class="image-section">
+        <img class="image" src="images/gene.png" />
+        <a>Training data for the Machine Learning model</a>
+      </div>
+      <div class="description">
+        <h1>Open ASO</h1>
+        <div class="button-section">
+          <a href="https://github.com/lackeylela/openASO" class="button">View Code</a>
+          <a href="https://www.youtube.com/watch?v=R_cInFwL2ig" class="button">View Video</a>
+        </div>
+        <h3>Motivation:</h3>
+        <a>
+          Antisense oligonucleotides (ASOs) have a high potential therapeutic value as they can be used to target any transcript and regulate its expression. Can machine learning be used to identify aspects of RNA targets that make
+          antisense oligonucleotide (ASOs) more effective?
+        </a>
+        <h3>Overview:</h3>
+        <a>
+          In this project, I experimented with various machine learning models (CNN, SVM) on a short sequence of nucleotide pairs to predict ASO efficiency. In addition, I used Grad-CAM to explain the weights of a trained CNN model and
+          determine the importance of each position in the nucleotide pairs sequence.
+        </a>
+        <h3>Background:</h3>
+        <a>
+          This project happened in HackSeqRNA 2020 in a team led by Lela Lackey. I was a member of the Machine Learning team with Alex Sweeten and Shawn Hsueh.
+        </a>
+      </div>
+    </div>
+    <div class="detail-section">
+      <h3>Method</h3>
+      <ol>
+        <h3><li>Support Vector Machine (SVM)</li></h3>
+        <ul>
+          <a>
+            As a baseline model, I used scikit learn's built in SVM and achieved a mean squared error of 0.0726.
+          </a>
+        </ul>
+        <h3><li>2D-Convolution</li></h3>
+        <ul>
+          <a>
+            Each genetic sequence was converted into a bitmap. I implemented a 3-layer cnvolution neural network using Keras, and achieved a mean squared error of 0.0645.
+          </a>
+        </ul>
+        <h3><li>1D-Convolution</li></h3>
+        <ul>
+          <a>
+            Eventually, I encoded the nucleotide base sequence into a 1-D sequence with depth=4. (Each depth represents one of ATGC) This better encoding further reduced the mean squared error to 0.0496.
+          </a>
+        </ul>
+        <h3><li>Interpretability using Grad-CAM</li></h3>
+        <ul>
+          <img class="image" src="images/openASO_Conv.png" />
+        </ul>
+      </ol>
+    </div>
+    <div class="footer"></div>
+  </body>
 </html>

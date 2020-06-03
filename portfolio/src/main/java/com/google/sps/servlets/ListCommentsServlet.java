@@ -1,7 +1,6 @@
 package com.google.sps.servlets;
 
 import com.google.sps.model.Comment;
-import com.google.sps.model.CommentManager;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -10,6 +9,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -21,36 +21,36 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/list-comments")
 public class ListCommentsServlet extends HttpServlet {
 
-  private CommentManager commentManager;
   private int requestCommentCount;
 
   @Override
   public void init() {
-      commentManager = CommentManager.getInstance();
-      requestCommentCount = 0;
+    requestCommentCount = 0;
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
-   
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     List<Comment> commentList = new ArrayList<>();
-    for (Entity entity : results.asIterable()){
 
-        long id = entity.getKey().getId();
-        String userName = (String) entity.getProperty("userName");
-        String content = (String) entity.getProperty("content");
-        long time = (long) entity.getProperty("timestamp");
-        long like = (long) entity.getProperty("like");
-        
-        commentList.add( 
-            new Comment(id, userName, content, time, like)
-        );
+    for (Entity entity: results.asIterable()) {
+
+      long id = entity.getKey().getId();
+      String userName = (String) entity.getProperty("userName");
+      String content = (String) entity.getProperty("content");
+      Date time = (Date) entity.getProperty("timestamp");
+      long like = (long) entity.getProperty("like");
+
+      commentList.add(new Comment(id, userName, content, time, like));
     }
+
+    requestCommentCount = Math.min(commentList.size(), requestCommentCount);
+    commentList = commentList.subList(0, requestCommentCount);
 
     String json = convertToJson(commentList);
 
@@ -65,6 +65,7 @@ public class ListCommentsServlet extends HttpServlet {
   }
 
   private int getRequestCount(HttpServletRequest request) {
+
     String countString = request.getParameter("count");
 
     int requestCommentCount;
@@ -75,7 +76,7 @@ public class ListCommentsServlet extends HttpServlet {
       return 0;
     }
 
-    if (requestCommentCount < 0 || requestCommentCount > 20) {
+    if (requestCommentCount<0 || requestCommentCount > 20) {
       System.err.println("Player choice is out of range: " + countString);
       return 0;
     }

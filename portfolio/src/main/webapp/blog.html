@@ -1,59 +1,42 @@
-<!-- html for blog page -->
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Tony Shen - Blog</title>
-        <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="css/blog.css">
-        <!--Google Font API-->
-        <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Karla&effect=anaglyph">
-        <!--Social Media Links--> 
-        <link rel="stylesheet" 
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <script src="js/script.js"></script>
-    </head>   
-    </head> 
-    <body onload="showComments()">      
-        <div class="meta-header"></div>
-        <div class="blog-container">
-            <div class="directory-section">
-                <ul>
-                    <li><a href="#20200529">2020-05-29</a></li>
-                </ul>
-            </div>
-            <div class="blog-section">
-                <div id="20200529">
-                    <h3>Google STEP 20' Internship</h3>
-                    <p>
-                        This summer, I am interning at the Google ranking team.
-                        My project includes this website and a capstone project.
-                        Currently, I am working to build a comment section on my website.
-                    </p> 
-
-                    <form action="/new-comments" method="POST">
-                        <textarea name="text-name">Username</textarea>
-                        <textarea name="text-comment">Enter your comment here...</textarea>
-
-                        <input type="checkbox" name="anonymous" value="true">Anonymous</input>
-                        <input type="submit" value="Submit">
-                    </form>
-
-                    <button class="pill" onclick="deleteComments()">Delete Comments</button>
-
-                    <form action="/list-comments" method="POST">
-                        <p>
-                            Show
-                            <input type="number" name="count" min="0" max="20">
-                            most recent comments
-                        </p>
-                        <input type="submit" value="Show Comments">
-                    </form>
-
-                    <div id="comment-section"></div>        
-                </div>
-            </div>
+  <head>
+    <title>Tony Shen - Blog</title>
+    <link rel="stylesheet" href="css/blog.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/script.js"></script>
+  </head>
+  <body onload="showComments()">
+    <div class="meta-header"></div>
+    <div class="blog-container">
+      <div class="directory-section">
+        <ul>
+          <li><a href="#20200529">2020-05-29</a></li>
+        </ul>
+      </div>
+      <div class="blog-section">
+        <div id="20200529">
+          <h3>Google STEP 20' Internship</h3>
+          <p>
+            This summer, I am interning at the Google ranking team. My project includes this website and a capstone project. Currently, I am working to build a comment section on my website.
+          </p>
+          <form action="/new-comments" method="POST">
+            <textarea name="text-name">Username</textarea>
+            <textarea name="text-comment">Enter your comment here...</textarea>
+            <input type="checkbox" id="anonymous" name="anonymous" value="true" />
+            <input type="submit" value="Submit" />
+          </form>
+          <form action="/list-comments" method="POST">
+            <p>
+              Show
+              <input type="number" name="count" min="0" max="20" />
+              most recent comments
+            </p>
+            <input type="submit" value="Show Comments" />
+          </form>
+          <div id="comment-section"></div>
         </div>
-        <div class="footer"></div>
-    </body>
+      </div>
+    </div>
+    <div class="footer"></div>
+  </body>
 </html>
