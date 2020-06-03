@@ -1,5 +1,10 @@
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <!--Google Font API-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karla&effect=anaglyph" />
+    <!--Social Media Links-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <title>Tony Shen - Blog</title>
     <link rel="stylesheet" href="css/blog.css" />
     <link rel="stylesheet" href="css/style.css" />
@@ -7,34 +12,37 @@
   </head>
   <body onload="showComments()">
     <div class="meta-header"></div>
-    <div class="blog-container">
-      <div class="directory-section">
-        <ul>
-          <li><a href="#20200529">2020-05-29</a></li>
-        </ul>
+    <div class="column">
+      <div class="blog-container">
+        <h3>Google STEP 20' Internship</h3>
+        <p>
+          This summer, I am interning at the Google ranking team. My project includes this website and a capstone project. Currently, I am working to build a comment section on my website.
+        </p>
+        <h4>Comment Section</h4>
       </div>
-      <div class="blog-section">
-        <div id="20200529">
-          <h3>Google STEP 20' Internship</h3>
-          <p>
-            This summer, I am interning at the Google ranking team. My project includes this website and a capstone project. Currently, I am working to build a comment section on my website.
-          </p>
-          <form action="/new-comments" method="POST">
-            <textarea name="text-name">Username</textarea>
-            <textarea name="text-comment">Enter your comment here...</textarea>
-            <input type="checkbox" id="anonymous" name="anonymous" value="true" />
-            <input type="submit" value="Submit" />
-          </form>
-          <form action="/list-comments" method="POST">
-            <p>
-              Show
-              <input type="number" name="count" min="0" max="20" />
-              most recent comments
-            </p>
-            <input type="submit" value="Show Comments" />
-          </form>
-          <div id="comment-section"></div>
-        </div>
+      <div class="comment-container">
+        <form action="/new-comments" method="POST">
+          <label for="text-name">Username</label>
+          <input type="text" id="text-name" name="text-name" placeholder="username">
+          <label for="text-comment">Comment</label>
+          <textarea type="text" id="text-comment" name="text-comment" placeholder="Write your comment here..."></textarea>
+          <div class="row">
+            <div class="row">
+              <input type="checkbox" id="anonymous" name="anonymous" value="true">
+              <label for="anonymous">Anonymous comment</label>
+            </div>
+            <input class="pill" type="submit" value="Send" >
+          </div>
+        </form>
+        <form action="/list-comments" method="POST">
+          <label for="count">
+          Show
+          <input type="number" name="count" min="0" max="20" value="5"/>
+          most recent comments
+          <label/>
+          <input class="pill" type="submit" value="Show Comments" />
+        </form>
+        <div id="comment-section"></div>
       </div>
     </div>
     <div class="footer"></div>

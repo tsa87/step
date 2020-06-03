@@ -20,6 +20,16 @@ function myTimer() {
   document.querySelector("#time").innerHTML = d.toLocaleTimeString();
 }
 
+function likeComment(comment) {
+  const params = new URLSearchParams();
+  params.append('id', comment.id);
+  fetch("/like-comment", {
+    method: 'POST',
+    body: params
+  })
+    .then(showComments)
+}
+
 /**
  * Delete a comment item in Datastore
  */
@@ -52,19 +62,21 @@ function showComments() {
  * Render a single comment
  */
 function createCommentItem(comment) {
-
-  const commentItem = document.createElement('div');
-
   const authorElement = document.createElement('h5');
-  authorElement.innerText = "Author: " + comment.userName;
-
+  authorElement.innerText = comment.userName;
+  const likeElement = document.createElement('h5');
+  likeElement.innerHTML = comment.like + " like";
   const timeElement = document.createElement('h5');
   timeElement.innerHTML = "Time: " + comment.time;
 
-  const likeElement = document.createElement('h5');
-  likeElement.innerHTML = comment.like + " like(s)";
-
-  const contentElement = document.createElement('p');
+  let headerHTML = document.createElement('div');
+  headerHTML.className = "comment-row";
+  let headerElements = [authorElement, timeElement, likeElement]
+  headerElements.forEach((htmlElement) => {
+    headerHTML.appendChild(htmlElement)
+  });
+  
+  const contentElement = document.createElement('h4');
   contentElement.innerHTML = comment.content;
 
   const deleteButtonElement = document.createElement('button');
@@ -74,12 +86,28 @@ function createCommentItem(comment) {
     commentItem.remove();
   });
 
-  let htmlElements = [authorElement, timeElement, likeElement, contentElement, deleteButtonElement];
-  htmlElements.forEach((htmlElement) => {
-    commentItem.appendChild(htmlElement)
+  const likeButtonElement = document.createElement('button');
+  likeButtonElement.innerText = 'Like';
+  likeButtonElement.addEventListener('click', () => {
+    likeComment(comment);
   });
 
-  return commentItem;
+  let footerHTML = document.createElement('div');
+  footerHTML.className = "comment-row";
+  let footerElements = [likeButtonElement, deleteButtonElement];
+  footerElements.forEach((htmlElement) => {
+    footerHTML.appendChild(htmlElement)
+  });
+
+  let commentHTML = document.createElement('div');
+  commentHTML.className = "comment";
+  
+  let commentElements = [headerHTML, contentElement, footerHTML];
+  commentElements.forEach((htmlElement) => {
+    commentHTML.appendChild(htmlElement)
+  });
+
+  return commentHTML;
 }
 
 /**
@@ -132,10 +160,8 @@ function htmlInject(templatePath, htmlTarget) {
     })
 }
 
-htmlInject('../head.html', "head")
-  .then(() => {
-    htmlInject('../header.html', ".meta-header")
-  })
+
+htmlInject('../header.html', ".meta-header")  
   .then(() => {
     return htmlInject('../footer.html', ".footer")
   })
