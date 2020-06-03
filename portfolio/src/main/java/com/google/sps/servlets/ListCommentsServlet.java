@@ -38,20 +38,21 @@ public class ListCommentsServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
+    List<Comment> commentList = new ArrayList<>();
     for (Entity entity : results.asIterable()){
 
+        long id = entity.getKey().getId();
         String userName = (String) entity.getProperty("userName");
         String content = (String) entity.getProperty("content");
         long time = (long) entity.getProperty("timestamp");
         long like = (long) entity.getProperty("like");
         
-        commentManager.addComment( 
-            new Comment(userName, content, time, like)
+        commentList.add( 
+            new Comment(id, userName, content, time, like)
         );
     }
 
-    commentManager.setCommentList(commentManager.getNRecentComments(requestCommentCount));
-    String json = convertToJson(commentManager);
+    String json = convertToJson(commentList);
 
     response.setContentType("application/json;");
     response.getWriter().println(json);
@@ -82,9 +83,9 @@ public class ListCommentsServlet extends HttpServlet {
     return requestCommentCount;
   }
 
-  private String convertToJson(CommentManager commentManager) {
+  private String convertToJson(List<Comment> commentList) {
     Gson gson = new Gson();
-    String json = gson.toJson(commentManager.getCommentList());
+    String json = gson.toJson(commentList);
     return json;
   }
 }

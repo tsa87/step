@@ -1,12 +1,14 @@
 package com.google.sps.model;
 
 public class Comment {
+    private long id;
     private String content;
     private String userName;
     private long time;
     private long like;
 
-    public Comment(String userName, String content, long time, long like) {
+    public Comment(long id, String userName, String content, long time, long like) {
+        this.id = id;
         this.content = content;
         this.userName = userName;
         this.time = time;
@@ -15,6 +17,10 @@ public class Comment {
 
     public void like() { 
         this.like ++;
+    }
+
+    public long getID() {
+        return this.id;
     }
 
     public String getContent() { 

@@ -20,7 +20,15 @@ function myTimer() {
   document.querySelector("#time").innerHTML = d.toLocaleTimeString();
 }
 
+function deleteComment(comment) {
+    const params = new URLSearchParams();
+    params.append('id', comment.id);
+    fetch("/delete-comment", {method: 'POST', body: params})
+        .then(showComments)
+}
+
 function showComments() {
+    console.log("we reached here!")
     fetch("/list-comments")
         .then(response => response.json())
         .then(renderComments);
@@ -29,12 +37,9 @@ function showComments() {
 function renderComments(comments) {
     const commentContainer = document.getElementById('comment-section');
     commentContainer.innerHTML = "";
-    
-    for (var i = 0; i < comments.length; i++) {
-        commentContainer.appendChild(
-            createCommentItem(comments[i])
-        );
-    }
+    comments.forEach((comment) => {
+        commentContainer.appendChild(createCommentItem(comment))
+    });
 }
 
 function createCommentItem(comment) {
@@ -44,7 +49,7 @@ function createCommentItem(comment) {
     authorElement.innerText = "Author: " + comment.userName;
 
     const timeElement = document.createElement('h5');
-    timeElement.innerHTML = "Time: " + comment.time;
+    timeElement.innerHTML = "Time: " + comment.id;
 
     const likeElement = document.createElement('h5');
     likeElement.innerHTML = comment.like + " like(s)";
@@ -52,10 +57,20 @@ function createCommentItem(comment) {
     const contentElement = document.createElement('p');
     contentElement.innerHTML = comment.content;
 
+    const deleteButtonElement = document.createElement('button');
+    deleteButtonElement.innerText = 'Delete';
+    deleteButtonElement.addEventListener('click', () => {
+        deleteComment(comment);
+
+        // Remove the task from the DOM.
+        commentItem.remove();
+    });
+
     commentItem.appendChild(authorElement);
     commentItem.appendChild(timeElement);
     commentItem.appendChild(likeElement);
     commentItem.appendChild(contentElement);
+    commentItem.appendChild(deleteButtonElement);
 
     return commentItem;
 }
