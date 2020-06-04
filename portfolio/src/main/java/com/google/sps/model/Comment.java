@@ -6,19 +6,15 @@ public class Comment {
   private long id;
   private String content;
   private String userName;
-  private Date time;
-  private long like;
+  private Date creationTime;
+  private long likeCount;
 
-  public Comment(long id, String userName, String content, Date time, long like) {
+  public Comment(long id, String userName, String content, Date creationTime, long likeCount) {
     this.id = id;
     this.content = content;
     this.userName = userName;
-    this.time = time;
-    this.like = like;
-  }
-
-  public void like() {
-    this.like++;
+    this.creationTime = creationTime;
+    this.likeCount = likeCount;
   }
 
   public long getID() {
@@ -31,10 +27,10 @@ public class Comment {
   public String getUserName() {
     return this.userName;
   }
-  public Date getTime() {
-    return this.time;
+  public Date getCreationTime() {
+    return this.creationTime;
   }
-  public long getLike() {
-    return this.like;
+  public long getLikeCount() {
+    return this.likeCount;
   }
 }

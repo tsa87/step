@@ -37,7 +37,10 @@ public class ListCommentsServlet extends HttpServlet {
     PreparedQuery results = datastore.prepare(query);
 
     List<Comment> commentList = new ArrayList<>();
+    int requestCommentCount = getRequestCount(request);
+    requestCommentCount = 5;
 
+    // Break in the loop
     for (Entity entity: results.asIterable()) {
 
       long id = entity.getKey().getId();
@@ -54,14 +57,10 @@ public class ListCommentsServlet extends HttpServlet {
 
     String json = convertToJson(commentList);
 
+    response.sendRedirect("/blog.html");
+
     response.setContentType("application/json;");
     response.getWriter().println(json);
-  }
-
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    requestCommentCount = getRequestCount(request);
-    response.sendRedirect("/blog.html");
   }
 
   private int getRequestCount(HttpServletRequest request) {

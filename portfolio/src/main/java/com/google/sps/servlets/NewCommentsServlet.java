@@ -15,12 +15,13 @@ public class NewCommentsServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
+    
     String content = getParameter(request, "text-comment", "this message was empty...");
     String userName = getParameter(request, "text-name", "anonymous");
     boolean isAnonymous = Boolean.parseBoolean(getParameter(request, "anonymous", "false"));
     userName = isAnonymous ? "anonymous" : userName;
 
+    // MAKE INTO A STATIC METHOD
     Entity commentEntity = new Entity("Comment");
 
     commentEntity.setProperty("userName", userName);

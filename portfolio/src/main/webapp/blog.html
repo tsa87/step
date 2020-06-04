@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/blog.css" />
     <script src="js/script.js"></script>
   </head>
-  <body onload="showComments()">
+  <body>
     <div class="meta-header"></div>
     <div class="column">
       <div class="blog-container">
@@ -34,13 +34,13 @@
             <input class="pill" type="submit" value="Send" >
           </div>
         </form>
-        <form action="/list-comments" method="POST">
+        <form action="/list-comments" method="GET">
           <label for="count">
           Show
           <input type="number" name="count" min="0" max="20" value="5"/>
           most recent comments
           <label/>
-          <input class="pill" type="submit" value="Show Comments" />
+          <input class="pill" type="submit" onclick="showComments()" value="Show Comments" />
         </form>
         <div id="comment-section"></div>
       </div>
