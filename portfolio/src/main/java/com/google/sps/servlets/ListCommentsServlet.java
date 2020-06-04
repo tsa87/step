@@ -32,11 +32,11 @@ public class ListCommentsServlet extends HttpServlet {
     List<Comment> commentList = new ArrayList<>();
     
     for (Entity entity: results.asIterable()) {
-	    Comment comment = Comment.toComment(entity);
+	  Comment comment = Comment.toComment(entity);
       commentList.add(comment);
     }
 
-		int requestCommentCount = getRequestCount(request);
+	int requestCommentCount = getRequestCount(request);
     requestCommentCount = Math.min(commentList.size(), requestCommentCount);
 		
     commentList = commentList.subList(0, requestCommentCount);
