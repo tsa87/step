@@ -68,13 +68,20 @@ textarea {
     overflow: scroll;
     width: 100%;
 }
+.comment {
+    display:flex;
+    flex-direction: column;
+}
+.comment > * {
+    margin: 0px;
+}
 .comment-row {
     display: flex;
+    height: 50px;
 }
 .comment-row > * {
     margin-right: 10px;
 }
-.comment {
-    display:flex;
-    flex-direction: column;
+.comment-row > button {
+    height: 20px;
 }

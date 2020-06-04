@@ -20,10 +20,13 @@ function myTimer() {
   document.querySelector("#time").innerHTML = d.toLocaleTimeString();
 }
 
-function likeComment(comment) {
+/**
+ * Communicate with servlet
+ */
+function servletOperation(endpoint, comment) {
   const params = new URLSearchParams();
   params.append('id', comment.id);
-  fetch("/like-comment", {
+  fetch(endpoint, {
     method: 'POST',
     body: params
   })
@@ -31,16 +34,17 @@ function likeComment(comment) {
 }
 
 /**
+ * Like a comment item in Datastore
+ */
+function likeComment(comment) {
+  servletOperation("/like-comment", comment);
+}
+
+/**
  * Delete a comment item in Datastore
  */
 function deleteComment(comment) {
-  const params = new URLSearchParams();
-  params.append('id', comment.id);
-  fetch("/delete-comment", {
-      method: 'POST',
-      body: params
-    })
-    .then(showComments)
+  servletOperation("/delete-comment", comment);
 }
 
 /**
@@ -59,15 +63,31 @@ function showComments() {
 }
 
 /**
+ * Create a text HTML element
+ */
+function createHTML(elementType, content) {
+    const htmlElement = document.createElement(elementType);
+    htmlElement.innerHTML = content;
+    return htmlElement;
+}
+
+/**
+ * Create a button
+ */
+function createButton(text, onclick) {
+    const buttonElement = document.createElement('button');
+    buttonElement.innerText = text;
+    buttonElement.addEventListener('click', onclick);
+    return buttonElement;
+}
+
+/**
  * Render a single comment
  */
 function createCommentItem(comment) {
-  const authorElement = document.createElement('h5');
-  authorElement.innerText = comment.userName;
-  const likeElement = document.createElement('h5');
-  likeElement.innerHTML = comment.like + " like";
-  const timeElement = document.createElement('h5');
-  timeElement.innerHTML = "Time: " + comment.time;
+  const authorElement = createHTML('h5', comment.userName);
+  const likeElement = createHTML('h5', comment.like + " like");
+  const timeElement = createHTML('h5', comment.time);
 
   let headerHTML = document.createElement('div');
   headerHTML.className = "comment-row";
@@ -76,21 +96,14 @@ function createCommentItem(comment) {
     headerHTML.appendChild(htmlElement)
   });
   
-  const contentElement = document.createElement('h4');
-  contentElement.innerHTML = comment.content;
+  const contentElement = createHTML('h4', comment.content);
 
-  const deleteButtonElement = document.createElement('button');
-  deleteButtonElement.innerText = 'Delete';
-  deleteButtonElement.addEventListener('click', () => {
+  const deleteButtonElement = createButton('Delete', () => {
     deleteComment(comment);
     commentItem.remove();
   });
 
-  const likeButtonElement = document.createElement('button');
-  likeButtonElement.innerText = 'Like';
-  likeButtonElement.addEventListener('click', () => {
-    likeComment(comment);
-  });
+  const likeButtonElement = createButton('Like', () => likeComment(comment));
 
   let footerHTML = document.createElement('div');
   footerHTML.className = "comment-row";
