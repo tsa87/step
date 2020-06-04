@@ -51,7 +51,8 @@ function deleteComment(comment) {
  * Render all comments in Datastore
  */
 function showComments() {
-  fetch("/list-comments")
+  let count = document.getElementById('count').value;
+  fetch("/list-comments?count="  + count)
     .then(response => response.json())
     .then((comments) => {
       const commentContainer = document.getElementById('comment-section');
@@ -59,7 +60,7 @@ function showComments() {
       comments.forEach((comment) => {
         commentContainer.appendChild(createCommentItem(comment))
       });
-    });
+    })
 }
 
 /**
@@ -86,8 +87,8 @@ function createButton(text, onclick) {
  */
 function createCommentItem(comment) {
   const authorElement = createHTML('h5', comment.userName);
-  const likeElement = createHTML('h5', comment.like + " like");
-  const timeElement = createHTML('h5', comment.time);
+  const likeElement = createHTML('h5', comment.likeCount + " like");
+  const timeElement = createHTML('h5', comment.creationTime);
 
   let headerHTML = document.createElement('div');
   headerHTML.className = "comment-row";
@@ -124,21 +125,6 @@ function createCommentItem(comment) {
 }
 
 /**
- * Auxiliary string comparsion function
- */
-function compareString(a, b) {
-  if (a.length !== b.length) {
-    return false;
-  }
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-/**
  * Build a text string one by one
  */
 const stumbleBuildString = (stringTarget, htmlTarget) => {
@@ -150,7 +136,7 @@ const stumbleBuildString = (stringTarget, htmlTarget) => {
 
   const randomChar = characters[Math.floor(Math.random() * vocabSize)];
 
-  if (!(compareString(stringTarget, currentString))) {
+  if (stringTarget != currentString) {
     if ((currentStringLength === 0) || (currentString.substr(currentStringLength - 1, 1) === stringTarget.substr(currentStringLength - 1, 1))) {
       currentString = currentString + randomChar;
     } else {

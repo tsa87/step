@@ -21,13 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/list-comments")
 public class ListCommentsServlet extends HttpServlet {
 
-  private int requestCommentCount;
-
-  @Override
-  public void init() {
-    requestCommentCount = 0;
-  }
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -37,27 +30,18 @@ public class ListCommentsServlet extends HttpServlet {
     PreparedQuery results = datastore.prepare(query);
 
     List<Comment> commentList = new ArrayList<>();
-    int requestCommentCount = getRequestCount(request);
-    requestCommentCount = 5;
-
-    // Break in the loop
+    
     for (Entity entity: results.asIterable()) {
-
-      long id = entity.getKey().getId();
-      String userName = (String) entity.getProperty("userName");
-      String content = (String) entity.getProperty("content");
-      Date time = (Date) entity.getProperty("timestamp");
-      long like = (long) entity.getProperty("like");
-
-      commentList.add(new Comment(id, userName, content, time, like));
+			Comment comment = Comment.toComment(entity);
+      commentList.add(comment);
     }
 
+		int requestCommentCount = getRequestCount(request);
     requestCommentCount = Math.min(commentList.size(), requestCommentCount);
+		
     commentList = commentList.subList(0, requestCommentCount);
 
     String json = convertToJson(commentList);
-
-    response.sendRedirect("/blog.html");
 
     response.setContentType("application/json;");
     response.getWriter().println(json);
@@ -66,18 +50,9 @@ public class ListCommentsServlet extends HttpServlet {
   private int getRequestCount(HttpServletRequest request) {
 
     String countString = request.getParameter("count");
-
-    int requestCommentCount;
-    try {
-      requestCommentCount = Integer.parseInt(countString);
-    } catch (NumberFormatException e) {
-      System.err.println("Could not convert to int: " + countString);
-      return 0;
-    }
-
-    if (requestCommentCount<0 || requestCommentCount > 20) {
-      System.err.println("Player choice is out of range: " + countString);
-      return 0;
+    int requestCommentCount = Integer.parseInt(countString);
+		if (requestCommentCount < 0 || requestCommentCount > 20) {
+      throw new IllegalArgumentException("request comment count must be in between 0 and 20");
     }
 
     return requestCommentCount;

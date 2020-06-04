@@ -1,5 +1,6 @@
 package com.google.sps.servlets;
 
+import com.google.sps.model.Comment;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -21,13 +22,7 @@ public class NewCommentsServlet extends HttpServlet {
     boolean isAnonymous = Boolean.parseBoolean(getParameter(request, "anonymous", "false"));
     userName = isAnonymous ? "anonymous" : userName;
 
-    // MAKE INTO A STATIC METHOD
-    Entity commentEntity = new Entity("Comment");
-
-    commentEntity.setProperty("userName", userName);
-    commentEntity.setProperty("content", content);
-    commentEntity.setProperty("timestamp", new Date());
-    commentEntity.setProperty("like", 0);
+    Entity commentEntity = Comment.toEntity(content, userName);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
@@ -35,7 +30,7 @@ public class NewCommentsServlet extends HttpServlet {
     response.sendRedirect("/blog.html");
   }
 
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+  private static String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
     value = (value == null) ? defaultValue : value;
     return value;

@@ -21,7 +21,7 @@
         <h4>Comment Section</h4>
       </div>
       <div class="comment-container">
-        <form action="/new-comments" method="POST">
+        <form class="narrow" action="/new-comments" method="POST">
           <label for="text-name">Username</label>
           <input type="text" id="text-name" name="text-name" placeholder="username">
           <label for="text-comment">Comment</label>
@@ -34,14 +34,11 @@
             <input class="pill" type="submit" value="Send" >
           </div>
         </form>
-        <form action="/list-comments" method="GET">
-          <label for="count">
-          Show
-          <input type="number" name="count" min="0" max="20" value="5"/>
-          most recent comments
-          <label/>
+        <div class="row narrow">
+          <label for="count">Number of comments to show:</label>
+          <input id="count" type="number" name="count" min="0" max="20" value="5"/>  
           <input class="pill" type="submit" onclick="showComments()" value="Show Comments" />
-        </form>
+        </div>
         <div id="comment-section"></div>
       </div>
     </div>
