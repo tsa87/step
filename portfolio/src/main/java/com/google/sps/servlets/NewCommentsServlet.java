@@ -22,7 +22,7 @@ public class NewCommentsServlet extends HttpServlet {
     boolean isAnonymous = Boolean.parseBoolean(getParameter(request, "anonymous", "false"));
     userName = isAnonymous ? "anonymous" : userName;
 
-    Entity commentEntity = Comment.toEntity(content, userName);
+    Entity commentEntity = Comment.toEntity(userName, content);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);

@@ -52,7 +52,7 @@ function deleteComment(comment) {
  */
 function showComments() {
   let count = document.getElementById('count').value;
-  fetch("/list-comments?count="  + count)
+  fetch("/list-comments?count=" + count)
     .then(response => response.json())
     .then((comments) => {
       const commentContainer = document.getElementById('comment-section');
