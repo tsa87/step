@@ -4,6 +4,7 @@ import java.util.Date;
 import com.google.appengine.api.datastore.Entity;
 
 public class Comment {
+    
   private long id;
   private String content;
   private String userName;
