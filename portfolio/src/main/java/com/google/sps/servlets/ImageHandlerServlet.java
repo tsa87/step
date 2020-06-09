@@ -40,6 +40,7 @@ public class ImageHandlerServlet extends HttpServlet {
       datastore.put(imageEntity);
     } catch (Exception e) {
       // Sometimes Java is is unable to read an image, suppress the Error
+      e.printStackTrace();
       response.sendRedirect("/error");
     }
     response.sendRedirect("/images.jsp");
