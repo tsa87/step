@@ -11,38 +11,28 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-@WebServlet("/random-greet")
-public class DataServlet extends HttpServlet {
-
-  private List<String> greets;
+/** Servlet responsible for deleting tasks. */
+@WebServlet("/delete-comment")
+public class DeleteCommentsServlet extends HttpServlet {
 
   @Override
-  public void init() {
-    greets = new ArrayList<>();
-    greets.add("Hello!");
-    greets.add("你好!");
-    greets.add("Bonjour!");
-    greets.add("Hola!");
-  }
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    long id = Long.parseLong(request.getParameter("id"));
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String greet = greets.get((int) (Math.random() * greets.size()));
-
-    response.setCharacterEncoding("UTF-8"); //Render Chinese
-    response.setContentType("text/html"); 
-    response.getWriter().println(greet);
+    Key commentEntityKey = KeyFactory.createKey("Comment", id);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.delete(commentEntityKey);
   }
-} 
+}

@@ -1,26 +1,93 @@
 /* CSS specific for blog.html */
-h3, p {
-    color: white;
+h4, h5, p, a {
+    color: black;
 }
-.blog-container {
-    border-bottom-color: white;
-	border-bottom-style: solid;
-	border-bottom-width: 2px;
-    display: flex;
-    flex-wrap: wrap;
+a {
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: None;
+}
+button, .smallpill {
+    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	border-radius: 10px;
+	color: white;
+	font-size: 10px;
+	font-weight: bold;
+    height: 20px;
+    max-width: 100px;
+	padding: 2px 5px;
+	text-align: center;
+}
+.column {
+    background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
     left: 110px;
 	position: relative;
+    width: 85%;
 }
-.directory-section {
-    border-right-color: white;
-	border-right-style: dashed;
-	border-right-width: 2px;
+.blog-container {
+    border-bottom-color: black;
+    border-bottom-width: 5px;
+    border-bottom-style: solid;
+}
+.blog-container > * {
+    margin: 10px;
+}
+.row {
+    display: flex; 
+    justify-content: space-between;
+}
+@media (max-width: 1000px) {
+    .blog-container {
+        right: 0px;
+    }
+}
+.comment-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.comment-container > * {
+    margin: 20px;
+}
+input[type=text]:hover {
+    background-color: gainsboro;
+}
+input[type=sumbit] {
+    width: 100px;
+}
+form {
     display: flex;
     flex-direction: column;
-    width: 150px;
 }
-.blog-section {
+form > * {
+    margin-bottom: 10px;
+}
+label {
+    font-size: 15px;
+    font-weight: bold;
+}
+textarea {
+  height: 50px;
+}
+#comment-section {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    height: 300px;
+    overflow: scroll;
+    width: 50%;
 }
+.comment {
+    display:flex;
+    flex-direction: column;
+}
+.comment > * {
+    margin: 0px;
+}
+.comment-row {
+    display: flex;
+    height: 40px;
+}
+.comment-row > * {
+    margin-right: 10px;
+}
+

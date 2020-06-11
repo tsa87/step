@@ -16,7 +16,7 @@ img {
 .overview-area {
     border-bottom-color: white;
 	border-bottom-style: solid;
-	border-bottom-width: 2px;
+	border-bottom-width: 5px;
 	display: flex;
 	flex-direction: row;
     left: 110px;
@@ -44,7 +44,7 @@ img {
     border-color: gray;
     border-width: 10px;
     border-style: solid;
-    max-width: 75%;
+    max-width: 90%;
 }
 .button-section {
 	display: flex;
@@ -79,10 +79,11 @@ img {
 	align-items: flex-start;
     border-bottom-color: white;
 	border-bottom-style: solid;
-	border-bottom-width: 2px;
+	border-bottom-width: 5px;
 	display: flex;
 	flex-direction: column;
     left: 110px;
+    padding: 20px;
 	position: relative;
-	width: 100%;
+	max-width: 90%;
 }
