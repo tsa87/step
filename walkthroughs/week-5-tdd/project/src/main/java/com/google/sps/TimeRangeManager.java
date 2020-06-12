@@ -3,30 +3,20 @@ package com.google.sps;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+
 import com.google.sps.TimeRange;
 
 /* TimeRangeManager is a collection of TimeRange that represents available/taken timeslots during a day */ 
 public class TimeRangeManager {
-	ArrayList<TimeRange> timeRanges;
 
-  public TimeRangeManager() {
-    timeRanges = new ArrayList<>();
-  }
-
-  public void add(TimeRange timeRange) {
-    timeRanges.add(timeRange);
-  }
-
-  private ArrayList<TimeRange> mergeTimeRangeOverlap() {
+  public static ArrayList<TimeRange> mergeTimeRangeOverlap(Collection<TimeRange> timeRanges) {
     
-    Collections.sort(timeRanges, TimeRange.ORDER_BY_START);
-
     // Shallow copy of timeRanges
-    ArrayList<TimeRange> mergedTimeRanges = new ArrayList<>(timeRanges);
+    ArrayList<TimeRange> mergedTimeRanges = new ArrayList<>();
 
     for (TimeRange timeRange : timeRanges) {
 
-      if (!overlapLastTimeRange(timeRange)) {
+      if (!isMergeable(mergedTimeRanges, timeRange)) {
         mergedTimeRanges.add(timeRange);
       } 
       // Merge the overlaps
@@ -34,10 +24,13 @@ public class TimeRangeManager {
         int size = mergedTimeRanges.size();
         TimeRange lastTimeRange = mergedTimeRanges.get(size - 1);
 
-        int newStart = lastTimeRange.start();
+        int newStart = Math.min(lastTimeRange.start(), timeRange.start());
         int newEnd = Math.max(lastTimeRange.end(), timeRange.end());
 
-        TimeRange mergedTimeRange = TimeRange.fromStartEnd(newStart, newEnd, false);
+        Boolean isInclusive = (newEnd == TimeRange.END_OF_DAY);
+
+        TimeRange mergedTimeRange = TimeRange.fromStartEnd(newStart, newEnd, isInclusive);
+        
         mergedTimeRanges.set(size - 1, mergedTimeRange); 
       }
     }
@@ -45,35 +38,29 @@ public class TimeRangeManager {
     return mergedTimeRanges; 
   }
 
-  // Return the available time ranges (if the current list is taken timeslots)
-  public Collection<TimeRange> invertTimeRanges(long minimumDuration) {
-
-    ArrayList<TimeRange> invertTimeRangeManger = new ArrayList<>();
-
-    int start = TimeRange.START_OF_DAY;
-    int end = TimeRange.END_OF_DAY;
-
-    ArrayList<TimeRange> mergedTimeRanges = mergeTimeRangeOverlap();
-
-    for (TimeRange timeRange : mergedTimeRanges) {
-
-      // The start of taken time slot == the end of time aval.
-      if ((timeRange.start() - start) >= minimumDuration) {
-        invertTimeRangeManger.add(TimeRange.fromStartEnd(start, timeRange.start(), false));
+  public static ArrayList<TimeRange> filterScore(ArrayList<TimeRange> timeRanges, ArrayList<Integer> scores, int minScore) {
+    ArrayList<TimeRange> result = new ArrayList<>();
+    int len = timeRanges.size();
+    for (int i = 0; i < len; i ++) {
+      if (scores.get(i) >= minScore) {
+        result.add(timeRanges.get(i));
       }
-
-      start = timeRange.end();
     }
-
-    if ((end - start) > minimumDuration) {
-      invertTimeRangeManger.add(TimeRange.fromStartEnd(start, end, true));
-    }
-    
-    return invertTimeRangeManger;
+    return result;
   }
 
-  /* Determine if new timerange overlaps with the last one */
-  private Boolean overlapLastTimeRange(TimeRange timeRange) {
+  public static ArrayList<TimeRange> filterDuration(ArrayList<TimeRange> timeRanges, long duration) {
+    ArrayList<TimeRange> result = new ArrayList<>();
+    for (TimeRange timeRange : timeRanges) {
+        if ((timeRange.end() - timeRange.start()) >= duration) {
+            result.add(timeRange);
+        }
+    }
+    return result;
+  }
+
+  /* Determine if new timerange ((overlaps with) or (is consecutive to)) the last one */
+  private static Boolean isMergeable(ArrayList<TimeRange> timeRanges, TimeRange timeRange) {
 
     int size = timeRanges.size();
 
@@ -83,7 +70,7 @@ public class TimeRangeManager {
     } 
     
     TimeRange lastTimeRange = timeRanges.get(size - 1);
-    return lastTimeRange.overlaps(timeRange);
+    return (lastTimeRange.overlaps(timeRange) || (lastTimeRange.end() == timeRange.start()));
   }
 
 }
