@@ -31,124 +31,18 @@ public final class FindMeetingQuery {
 
   private final int LARGE_INT = 1000000;
 
-  public static void main(String[] args) {
-      final Collection<Event> NO_EVENTS = Collections.emptySet();
-      final Collection<String> NO_ATTENDEES = Collections.emptySet();
-
-    // Some people that we can use in our tests.
-      final String PERSON_A = "Person A";
-      final String PERSON_B = "Person B";
-      final String PERSON_C = "Person C";
-
-    // All dates are the first day of the year 2020.
-      final int TIME_0800AM = TimeRange.getTimeInMinutes(8, 0);
-      final int TIME_0830AM = TimeRange.getTimeInMinutes(8, 30);
-      final int TIME_0900AM = TimeRange.getTimeInMinutes(9, 0);
-      final int TIME_0930AM = TimeRange.getTimeInMinutes(9, 30);
-      final int TIME_1000AM = TimeRange.getTimeInMinutes(10, 0);
-      final int TIME_1100AM = TimeRange.getTimeInMinutes(11, 00);
-
-      final int DURATION_30_MINUTES = 30;
-      final int DURATION_60_MINUTES = 60;
-      final int DURATION_90_MINUTES = 90;
-      final int DURATION_1_HOUR = 60;
-      final int DURATION_2_HOUR = 120;
-
-      FindMeetingQuery query = new FindMeetingQuery();
-
-      Collection<Event> events = Arrays.asList(
-          new Event("Event 1", TimeRange.fromStartDuration(TIME_0800AM, DURATION_30_MINUTES),
-              Arrays.asList(PERSON_A)),
-          new Event("Event 2", TimeRange.fromStartDuration(TIME_0900AM, DURATION_30_MINUTES),
-              Arrays.asList(PERSON_B)),
-          new Event("Event 3", TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TimeRange.END_OF_DAY, true),
-              Arrays.asList(PERSON_C)));
-
-      MeetingRequest request =
-          new MeetingRequest(Arrays.asList(PERSON_A, PERSON_B), DURATION_30_MINUTES);
-    
-      request.addOptionalAttendee(PERSON_C);
-
-      Collection<TimeRange> actual = query.query(events, request);
-      Collection<TimeRange> expected =
-        Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_0800AM, false),
-            TimeRange.fromStartEnd(TIME_0830AM, TIME_0900AM, false),
-            TimeRange.fromStartEnd(TIME_0930AM, TimeRange.END_OF_DAY, true));
-
-      for (TimeRange timeRange : actual) {
-        System.out.println(timeRange);
-      }
-
-      System.out.println("-----");
-
-      for (TimeRange timeRange : expected) {
-        System.out.println(timeRange);
-      }
-  }
-
-
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
 
     Collection<String> attendees = request.getAttendees();
     Collection<String> optionalAttendees = request.getOptionalAttendees();
     long duration = request.getDuration();
 
+    // Initalize a dictionary <start time, availability score>
+    TreeMap<Integer, Integer> timeCutoffs = getTimeCutoffs(events);
 
-    // Sorted Map:
-    // Key [Int] represents StartTime
-    // Value [Int] represents score to schedule event at this time.
-    //    -1000000 if at least 1 required attendee is not free.
-    //    -x       if x optional attendees are not free
-    TreeMap<Integer, Integer> timeCutoffs = new TreeMap<>();
-
-    // Initalize Time Cutoff with 0's
-    timeCutoffs.put(TimeRange.START_OF_DAY, 0);
-
-    for (Event event : events) {
-      int startTime = event.getWhen().start();
-      int endTime = event.getWhen().end();
-
-    	timeCutoffs.put(startTime, 0);
-      timeCutoffs.put(endTime, 0);
-    }
-
-    
-	  for (Event event : events) {
-      int startTime = event.getWhen().start();
-      int endTime = event.getWhen().end();
-
-      int unavaiableOptionalAttendeeCount = countAttendeeOverlap(event.getAttendees(), optionalAttendees);
-      int unavaiableMandatoryAttendeeCount = countAttendeeOverlap(event.getAttendees(), attendees);
-
-      // Modify the the time ranges with penalties
-      if ((unavaiableOptionalAttendeeCount > 0) || (unavaiableMandatoryAttendeeCount > 0)) {
-
-        SortedMap<Integer, Integer> timeSlots = timeCutoffs.subMap(startTime, endTime);
-        
-        // Build list of keys to avoid concurrent edit
-        ArrayList<Integer> unavaiableTimes = new ArrayList<>();
-        for (Map.Entry<Integer,Integer> entry : timeSlots.entrySet()) {
-          Integer key = entry.getKey();
-          unavaiableTimes.add(key);
-        }
-
-        for (Integer key : unavaiableTimes) {
-          int value = timeCutoffs.get(key);
-
-          if (unavaiableMandatoryAttendeeCount > 0) {
-            value -= LARGE_INT; // Most severe penalty if manadatory attendee cannot come.
-          } else {
-            value -= unavaiableOptionalAttendeeCount;
-          }
-
-          System.out.println(key + "has" + value);
-
-          timeCutoffs.put(key, value);
-        }
-
-      }
-    }
-
+    // Penalize each time periods score based on the availability of attendees.
+    scoreTimeCutoffs(timeCutoffs, events, attendees, optionalAttendees);
+	  
     ArrayList<TimeRange> availableTimes = new ArrayList<>();
     ArrayList<Integer> timeSlotScore = new ArrayList<>();
 
@@ -164,7 +58,6 @@ public final class FindMeetingQuery {
       if (key > lastTimeSlot) { //skip the first
         Boolean isInclusive = (key == TimeRange.END_OF_DAY);
 
-        System.out.println(lastTimeSlot + "new has" + lastKeyScore);
 
         availableTimes.add(TimeRange.fromStartEnd(lastTimeSlot, key, isInclusive));
         timeSlotScore.add(lastKeyScore);
@@ -173,8 +66,6 @@ public final class FindMeetingQuery {
       lastTimeSlot = key;
       lastKeyScore = score;
     }
-
-    for (int score : timeSlotScore) System.out.println(score);
 
     int timeSegmentCount = availableTimes.size();
     int maxScore = -1*LARGE_INT;
@@ -203,12 +94,87 @@ public final class FindMeetingQuery {
       return new ArrayList<>();
     }
 
-
     ArrayList<TimeRange> availableTimesFiltered = TimeRangeManager.filterScore(availableTimes, timeSlotScore, maxScore);
     ArrayList<TimeRange> availableTimesMerged = TimeRangeManager.mergeTimeRangeOverlap(availableTimesFiltered);
     ArrayList<TimeRange> availableTimesDuration = TimeRangeManager.filterDuration(availableTimesMerged, duration);
 
     return availableTimesDuration;
+  }
+
+  // Initalize a sorted dictionary
+  // 
+  // Key {Int} represents StartTime
+  // Value {Int} represents score to schedule event at this time.
+  //    -1000000 <=> least 1 required attendee is not free.
+  //    -x       <=> optional attendees are not free
+  //
+  // Example: 
+  // if from 00:00 ~ 01:35, 5 optional guest can't attend
+  // from 01:35 ~ 24:00 at least one mandatory guest can't attend
+  //
+  // |-----(-5)-----|----------------(-100000)---------------|
+  // 00:00        01:35                                    24:00
+  // 
+  // timeCutoffs Dict: {0: -5, 95: -100000}
+  private TreeMap<Integer, Integer> getTimeCutoffs(Collection<Event> events) {
+
+    TreeMap<Integer, Integer> timeCutoffs = new TreeMap<>();
+
+    // Initalize Time Cutoff with 0's
+    timeCutoffs.put(TimeRange.START_OF_DAY, 0);
+
+    for (Event event : events) {
+      int startTime = event.getWhen().start();
+      int endTime = event.getWhen().end();
+
+      timeCutoffs.put(startTime, 0);
+      timeCutoffs.put(endTime, 0);
+    }
+
+    return timeCutoffs;
+  }
+
+  // Penalize 100000 points if at least one mandatory guest can't attend
+  // Penalize 1 point for each optional guest who can't attend
+  private void scoreTimeCutoffs(
+      TreeMap<Integer, Integer> timeCutoffs,
+      Collection<Event> events,
+      Collection<String> attendees,
+      Collection<String> optionalAttendees
+    ) {
+
+    for (Event event : events) {
+      int startTime = event.getWhen().start();
+      int endTime = event.getWhen().end();
+
+      int unavaiableOptionalAttendeeCount = countAttendeeOverlap(event.getAttendees(), optionalAttendees);
+      int unavaiableMandatoryAttendeeCount = countAttendeeOverlap(event.getAttendees(), attendees);
+
+      // Modify the the time ranges with penalties
+      if ((unavaiableOptionalAttendeeCount > 0) || (unavaiableMandatoryAttendeeCount > 0)) {
+
+        SortedMap<Integer, Integer> eventTimePeriod = timeCutoffs.subMap(startTime, endTime);
+        
+        // Build list of keys to avoid concurrent edit
+        ArrayList<Integer> affectedTimes = new ArrayList<>();
+        for (Map.Entry<Integer,Integer> entry : eventTimePeriod.entrySet()) {
+          Integer cutoffStartTime = entry.getKey();
+          affectedTimes.add(cutoffStartTime);
+        }
+
+        for (Integer cutoffStartTime : affectedTimes) {
+          int score = timeCutoffs.get(cutoffStartTime);
+
+          if (unavaiableMandatoryAttendeeCount > 0) {
+            score -= LARGE_INT; // Most severe penalty if manadatory attendee cannot come.
+          } else {
+            score -= unavaiableOptionalAttendeeCount; // -1 penalty per optional attendee
+          }
+
+          timeCutoffs.put(cutoffStartTime, score);
+        }
+      }
+    }
   }
 
   public static int countAttendeeOverlap(Collection<String> attendeeListA, Collection<String> attendeeListB) {
