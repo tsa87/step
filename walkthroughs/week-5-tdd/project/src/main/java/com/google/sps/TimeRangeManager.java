@@ -1,10 +1,10 @@
 package com.google.sps;
 
+import com.google.sps.TimeRange;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-
-import com.google.sps.TimeRange;
+import org.javatuples.Pair;
 
 /* TimeRangeManager is a collection of TimeRange that represents available/taken timeslots during a day */ 
 public class TimeRangeManager {
@@ -38,13 +38,17 @@ public class TimeRangeManager {
     return mergedTimeRanges; 
   }
 
-  public static ArrayList<TimeRange> filterScore(ArrayList<TimeRange> timeRanges, ArrayList<Integer> scores, int minScore) {
+  public static ArrayList<TimeRange> filterScore(ArrayList<Pair<TimeRange, Integer>> timeRangeScorePairs, int minScore) {
     ArrayList<TimeRange> result = new ArrayList<>();
-    int len = timeRanges.size();
-    for (int i = 0; i < len; i ++) {
-      if (scores.get(i) >= minScore) {
-        result.add(timeRanges.get(i));
+    for (Pair<TimeRange, Integer> timeRangeScorePair : timeRangeScorePairs) {
+
+      TimeRange timeRange = timeRangeScorePair.getValue0();
+      int score = timeRangeScorePair.getValue1();
+      
+      if (score >= minScore) {
+        result.add(timeRange);
       }
+
     }
     return result;
   }
