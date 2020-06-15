@@ -40,20 +40,4 @@ public class Comment {
     return new Comment(id, userName, content, creationTime, likeCount);
   }
 
-  public long getID() {
-    return this.id;
-  }
-
-  public String getContent() {
-    return this.content;
-  }
-  public String getUserName() {
-    return this.userName;
-  }
-  public Date getCreationTime() {
-    return this.creationTime;
-  }
-  public long getLikeCount() {
-    return this.likeCount;
-  }
 }
