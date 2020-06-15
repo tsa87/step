@@ -13,19 +13,19 @@ public class Comment {
   private Double sentimentScore;
 
   private Comment(
-		long id,
-		String userName,
-		String content,
-		Date creationTime,
-		long likeCount,
-		Double sentimentScore
-	) {
-			this.id = id;
-			this.content = content;
-			this.userName = userName;
-			this.creationTime = creationTime;
-			this.likeCount = likeCount;
-			this.sentimentScore = sentimentScore;
+    long id,
+    String userName,
+    String content,
+    Date creationTime,
+    long likeCount,
+    Double sentimentScore) {
+
+    this.id = id;
+    this.content = content;
+    this.userName = userName;
+    this.creationTime = creationTime;
+    this.likeCount = likeCount;
+    this.sentimentScore = sentimentScore;
   }
 
   public static Entity toEntity(String userName, String content, float sentimentScore) {
