@@ -32,7 +32,7 @@ public final class TimeRange {
   public static final Comparator<TimeRange> ORDER_BY_START = new Comparator<TimeRange>() {
     @Override
     public int compare(TimeRange a, TimeRange b) {
-      return Long.compare(a.start, b.start);
+      return Long.compare(a.start(), b.start());
     }
   };
 
