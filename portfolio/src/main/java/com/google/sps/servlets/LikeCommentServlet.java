@@ -18,6 +18,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,19 +31,21 @@ public class LikeCommentServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
     long id = Long.parseLong(request.getParameter("id"));
 
     Key commentEntityKey = KeyFactory.createKey("Comment", id);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    
+
     try {
       Entity commentEntity = datastore.get(commentEntityKey);
       long likeCount = (long) commentEntity.getProperty("like");
       commentEntity.setProperty("like", likeCount + 1);
 
       datastore.put(commentEntity);
-    } catch (Exception e) {
-        e.printStackTrace();
+    }
+    catch (EntityNotFoundException e) {
+      e.printStackTrace();
     }
   }
 }
