@@ -32,11 +32,11 @@ public class ListCommentsServlet extends HttpServlet {
     List<Comment> commentList = new ArrayList<>();
     
     for (Entity entity: results.asIterable()) {
-	    Comment comment = Comment.toComment(entity);
+      Comment comment = Comment.toComment(entity);
       commentList.add(comment);
     }
 
-		int requestCommentCount = getRequestCount(request);
+    int requestCommentCount = getRequestCount(request);
     requestCommentCount = Math.min(commentList.size(), requestCommentCount);
 		
     commentList = commentList.subList(0, requestCommentCount);
@@ -51,7 +51,8 @@ public class ListCommentsServlet extends HttpServlet {
 
     String countString = request.getParameter("count");
     int requestCommentCount = Integer.parseInt(countString);
-		if (requestCommentCount < 0 || requestCommentCount > 20) {
+	  
+    if (requestCommentCount < 0 || requestCommentCount > 20) {
       throw new IllegalArgumentException("request comment count must be in between 0 and 20");
     }
 
