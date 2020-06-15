@@ -204,11 +204,11 @@ public final class FindMeetingQuery {
       int startTime = event.getWhen().start();
       int endTime = event.getWhen().end();
 
-      int unavaiableOptionalAttendeeCount = countAttendeeOverlap(event.getAttendees(), optionalAttendees);
-      int unavaiableMandatoryAttendeeCount = countAttendeeOverlap(event.getAttendees(), attendees);
+      int unavailableOptionalAttendeeCount = countAttendeeOverlap(event.getAttendees(), optionalAttendees);
+      int unavailableMandatoryAttendeeCount = countAttendeeOverlap(event.getAttendees(), attendees);
 
       // Modify the the time ranges with penalties
-      if ((unavaiableOptionalAttendeeCount > 0) || (unavaiableMandatoryAttendeeCount > 0)) {
+      if ((unavailableOptionalAttendeeCount > 0) || (unavailableMandatoryAttendeeCount > 0)) {
 
         SortedMap<Integer, Integer> eventTimePeriod = timeCutoffs.subMap(startTime, endTime);
         
@@ -222,12 +222,12 @@ public final class FindMeetingQuery {
         for (Integer cutoffStartTime : affectedTimes) {
           int score = timeCutoffs.get(cutoffStartTime);
 
-          if (unavaiableMandatoryAttendeeCount > 0) {
+          if (unavailableMandatoryAttendeeCount > 0) {
             // Most severe penalty if manadatory attendee cannot come.
             score += UNAVAILABLE_GUEST_PENALTY; 
           } else {
             // -1 penalty per optional attendee
-            score += unavaiableOptionalAttendeeCount * UNAVAILABLE_OPTIONAL_GUEST_PENALTY; 
+            score += unavailableOptionalAttendeeCount * UNAVAILABLE_OPTIONAL_GUEST_PENALTY; 
           }
 
           timeCutoffs.put(cutoffStartTime, score);
