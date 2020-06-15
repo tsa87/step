@@ -2,7 +2,12 @@
 h3, h1, a, p {
     color: white;
 }
-.image-container {
+.add-section {
+    padding: 10px;
+    left: 110px;
+    position: relative; 
+}
+#image-container {
     border-bottom-color: white;
 	border-bottom-style: solid;
 	border-bottom-width: 5px;
@@ -13,10 +18,71 @@ h3, h1, a, p {
     max-width: 90%;
     position: relative; 
 }
-.image-container > img {
+#image-container > div {
+	align-items: center;
+	border-radius: 10px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    height: 370px;
+    margin: 20px;
+    padding: 10px;
+    width: 300px; 
+}
+#image-container > div > h5 {
+    color:black;
+    align-self: flex-start;
+    margin: 5px;
+}
+#image-container > div > img {
     border-radius: 10px;
     height: 300px;
-    margin: 20px;
     object-fit: cover;
     width: 300px; 
+}
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+}
+.modal-content > h3 {
+  color: black;
+}
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+form {
+  display: flex;
+  flex-direction: column;
+}
+form > * {
+  margin-top: 10px;
+}
+.pill {
+  align-self: center;
+}
+.like-row {
+  display: flex;
+  flex-direction:row;
+  justify-content: space-between;
+  width: 97%;
+  top: -15px;
+  position: relative;
 }
