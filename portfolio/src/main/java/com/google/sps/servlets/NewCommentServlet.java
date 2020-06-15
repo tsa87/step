@@ -1,6 +1,7 @@
 package com.google.sps.servlets;
 
 import com.google.sps.model.Comment;
+import com.google.sps.model.SentimentEvaluator;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -19,10 +20,11 @@ public class NewCommentServlet extends HttpServlet {
     
     String content = getParameter(request, "text-comment", "this message was empty...");
     String userName = getParameter(request, "text-name", "anonymous");
+    float sentimentScore = SentimentEvaluator.getSentiment(content);
     boolean isAnonymous = Boolean.parseBoolean(getParameter(request, "anonymous", "false"));
     userName = isAnonymous ? "anonymous" : userName;
 
-    Entity commentEntity = Comment.toEntity(userName, content);
+    Entity commentEntity = Comment.toEntity(userName, content, sentimentScore);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);

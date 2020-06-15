@@ -36,7 +36,8 @@ public class ListCommentsServlet extends HttpServlet {
       commentList.add(comment);
     }
 
-		int requestCommentCount = getRequestCount(request);		
+	int requestCommentCount = getRequestCount(request);		
+
     if (requestCommentCount < commentList.size()) {
 	    commentList = commentList.subList(0, requestCommentCount);
     }
