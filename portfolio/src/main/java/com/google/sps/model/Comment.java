@@ -5,6 +5,7 @@ import java.util.Date;
 import com.google.appengine.api.datastore.Entity;
 
 public class Comment {
+    
   private long id;
   private String content;
   private String userName;
@@ -20,12 +21,14 @@ public class Comment {
 		long likeCount,
 		Double sentimentScore
 	) {
-			this.id = id;
-			this.content = content;
-			this.userName = userName;
-			this.creationTime = creationTime;
-			this.likeCount = likeCount;
-			this.sentimentScore = sentimentScore;
+
+    this.id = id;
+    this.content = content;
+    this.userName = userName;
+    this.creationTime = creationTime;
+    this.likeCount = likeCount;
+    this.sentimentScore = sentimentScore;
+
   }
 
   public static Entity toEntity(String userName, String content, float sentimentScore) {

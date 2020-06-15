@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/blog.css" />
     <script src="js/script.js"></script>
   </head>
-  <body>
+  <body onload="onLoad(); showComments()">
     <div class="meta-header"></div>
     <div class="column">
       <div class="blog-container">
@@ -25,9 +25,9 @@
         <div class="input-container">
           <form class="narrow" action="/new-comments" method="POST">
             <label for="text-name">Username (required)</label>
-            <input type="text" id="text-name" name="text-name" placeholder="username" required>
+            <input type="text" id="text-name" name="text-name" placeholder="username" maxlength="20" required>
             <label for="text-comment">Comment (required)</label>
-            <textarea type="text" id="text-comment" name="text-comment" placeholder="Write your comment here..." required></textarea>
+            <textarea type="text" id="text-comment" name="text-comment" maxlength="300" placeholder="Write your comment here..." required></textarea>
             <div class="row">
               <div class="row">
                 <input type="checkbox" id="anonymous" name="anonymous" value="true">

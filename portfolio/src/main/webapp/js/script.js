@@ -23,28 +23,32 @@ function myTimer() {
 /**
  * Communicate with servlet
  */
-function servletOperation(endpoint, comment) {
+function servletOperation(endpoint, comment, refreshMethod) {
   const params = new URLSearchParams();
   params.append('id', comment.id);
   fetch(endpoint, {
     method: 'POST',
     body: params
   })
-    .then(showComments)
+    .then(refreshMethod)
 }
 
 /**
  * Like a comment item in Datastore
  */
 function likeComment(comment) {
-  servletOperation("/like-comment", comment);
+  servletOperation("/like-comment", comment, showComments);
+}
+
+function likeImage(image) {
+  servletOperation("/like-image", image, showImages);
 }
 
 /**
  * Delete a comment item in Datastore
  */
 function deleteComment(comment) {
-  servletOperation("/delete-comment", comment);
+  servletOperation("/delete-comment", comment, showComments);
 }
 
 /**
@@ -52,7 +56,7 @@ function deleteComment(comment) {
  */
 function showComments() {
   let count = document.getElementById('count').value;
-  fetch("/list-comments?count=" + count)
+  fetch(`/list-comments?count=${count}`)
     .then(response => response.json())
     .then((comments) => {
       const commentContainer = document.getElementById('comment-section');
@@ -89,12 +93,20 @@ function getEmoji(sentiment) {
 }
 
 /**
+ * Reduce HTML injections 
+ */
+ function cleanupInput(string) {
+  return string.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+ }
+
+/**
  * Render a single comment
  */
 function createCommentItem(comment) {
   const emoji = getEmoji(comment.sentimentScore);  
 
-  const authorElement = createHTML('h5', comment.userName + " " + emoji);
+  const authorElement = createHTML('h5', cleanupInput(comment.userName) + " " + emoji);
+
   const likeElement = createHTML('h5', comment.likeCount + " like");
   const timeElement = createHTML('h5', comment.creationTime);
 
@@ -105,7 +117,8 @@ function createCommentItem(comment) {
     headerHTML.appendChild(htmlElement)
   });
   
-  const contentElement = createHTML('h4', comment.content);
+  content = cleanupInput(comment.content);
+  const contentElement = createHTML('h4', content);
 
   const deleteButtonElement = createButton('Delete', () => {
     deleteComment(comment);
@@ -133,13 +146,55 @@ function createCommentItem(comment) {
 }
 
 /**
+ * 
+ */
+function showImages() {
+  fetch("/list-images")
+    .then(response => response.json())
+    .then(images => {
+      const imageContainer = document.getElementById('image-container');
+      imageContainer.innerHTML = ""
+      for (const image of images) {
+        const imageElement = createImageItem(image)
+        imageContainer.appendChild(imageElement)
+      } 
+    });
+}
+
+function createImageItem(image) {
+  const divElement = document.createElement('div');
+
+  const imageElement = document.createElement('img');
+  imageElement.src = image.imageUrl;
+  
+  const captionElement = createHTML('h5', "[" + image.userName + "]: " + image.caption);
+  const timeElement = createHTML('h5', "Post time: " + image.creationTime);
+
+  const likeRow = createHTML('div', "");
+  likeRow.className = "like-row";
+  const likeElement = createHTML('h5', image.likeCount + " like");
+  const likeButtonElement = createButton('Like', () => likeImage(image));
+  likeButtonElement.className = "pill";
+
+  likeRow.appendChild(likeElement);
+  likeRow.appendChild(likeButtonElement);
+
+  const childElements = [imageElement, captionElement, timeElement, likeRow];
+  childElements.forEach((htmlElement) => {
+    divElement.appendChild(htmlElement)
+  });
+
+  return divElement;
+}
+
+/**
  * Build a text string one by one
  */
 const stumbleBuildString = (stringTarget, htmlTarget) => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const vocabSize = characters.length;
 
-  let currentString = document.querySelector('#mission').innerText;
+  let currentString = document.querySelector(htmlTarget).innerText;
   const currentStringLength = currentString.length
 
   const randomChar = characters[Math.floor(Math.random() * vocabSize)];
@@ -151,7 +206,7 @@ const stumbleBuildString = (stringTarget, htmlTarget) => {
       currentString = currentString.substr(0, currentStringLength - 1) + randomChar;
     }
   }
-  document.querySelector('#mission').innerHTML = currentString;
+  document.querySelector(htmlTarget).innerHTML = currentString;
 }
 
 /**
@@ -167,7 +222,29 @@ function htmlInject(templatePath, htmlTarget) {
     })
 }
 
+function buildAddImgModal() {
+  var modal = document.getElementById("modal");
+  var addImgBtn = document.getElementById("add-image-button");
+  addImgBtn.onclick = function () {
+    modal.style.display = "block";
+  }
+	
+  var span = document.getElementsByClassName("close")[0];
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
 
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+}
+
+/**
+ * Use javascript to build part of page
+ */
+function buildPage() {
 htmlInject('../header.html', ".meta-header")  
   .then(() => {
     return htmlInject('../footer.html', ".footer")
@@ -176,5 +253,10 @@ htmlInject('../header.html', ".meta-header")
     return setInterval(myTimer, 1000);
   })
   .then(() => {
-    return setInterval(() => stumbleBuildString('MISSION', "#mission"), 50)
-  })
+    return setInterval(() => stumbleBuildString('OBJECTIVE', "#objective"), 50)
+  });
+}
+
+function onLoad() {
+  buildPage();
+}
