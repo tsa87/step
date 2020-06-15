@@ -10,7 +10,7 @@ public class Comment {
   private String userName;
   private Date creationTime;
   private long likeCount;
-	private float sentimentScore;
+  private Double sentimentScore;
 
   private Comment(
 		long id,
@@ -18,7 +18,7 @@ public class Comment {
 		String content,
 		Date creationTime,
 		long likeCount,
-		float sentimentScore
+		Double sentimentScore
 	) {
 			this.id = id;
 			this.content = content;
@@ -46,7 +46,7 @@ public class Comment {
     String content = (String) commentEntity.getProperty("content");
     Date creationTime = (Date) commentEntity.getProperty("timestamp");
     long likeCount = (long) commentEntity.getProperty("like");
-    float sentimentScore = (float) commentEntity.getProperty("sentiment");
+    Double sentimentScore = (Double) commentEntity.getProperty("sentiment");
 
     return new Comment(id, userName, content, creationTime, likeCount, sentimentScore);
   }

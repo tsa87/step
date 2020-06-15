@@ -82,11 +82,19 @@ function createButton(text, onclick) {
     return buttonElement;
 }
 
+function getEmoji(sentiment) {
+  if (sentiment < 0.33) return "&#128533;"
+  else if (sentiment < 0.66) return "&#128527;"
+  else return "&#128516;"
+}
+
 /**
  * Render a single comment
  */
 function createCommentItem(comment) {
-  const authorElement = createHTML('h5', comment.userName);
+  const emoji = getEmoji(comment.sentimentScore);  
+
+  const authorElement = createHTML('h5', comment.userName + " " + emoji);
   const likeElement = createHTML('h5', comment.likeCount + " like");
   const timeElement = createHTML('h5', comment.creationTime);
 
