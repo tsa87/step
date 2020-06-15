@@ -7,16 +7,16 @@ import java.io.IOException;
 
 public class SentimentEvaluator {
 
-	public static float getSentiment(String message) throws IOException {
-		Document doc =
-        	Document.newBuilder().setContent(message).setType(Document.Type.PLAIN_TEXT).build();
+  public static float getSentiment(String message) throws IOException {
+    Document doc =
+      Document.newBuilder().setContent(message).setType(Document.Type.PLAIN_TEXT).build();
 
-        LanguageServiceClient languageService = LanguageServiceClient.create();
-        Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
-        float score = sentiment.getScore();
-        languageService.close();
+    LanguageServiceClient languageService = LanguageServiceClient.create();
+    Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
+    float score = sentiment.getScore();
+    languageService.close();
         
-		return score;
-	}
-
+    return score;
+  }
+	
 }
