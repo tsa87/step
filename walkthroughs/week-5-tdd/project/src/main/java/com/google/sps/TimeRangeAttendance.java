@@ -10,12 +10,12 @@ import java.util.HashSet;
  */
 public class TimeRangeAttendance extends TimeRange {
 
-	public Boolean isAllMandatoryGuestFree;
-	public Integer numOptionalGuestUnavailable;
+	private Boolean isAllMandatoryGuestFree;
+	private Integer numOptionalGuestUnavailable;
 
 	// avoid double count of optional guest if they are 
 	// involved in 2+ events during the same period
-	public HashSet<String> unavailableOptionalGuestList; 
+	private HashSet<String> unavailableOptionalGuestList; 
 
 	public TimeRangeAttendance(int start, int duration) {
 		super(start, duration);
@@ -24,6 +24,30 @@ public class TimeRangeAttendance extends TimeRange {
 		numOptionalGuestUnavailable = 0;
 		unavailableOptionalGuestList = new HashSet<>();
 	}
+
+    public void setIsAllMandatoryGuestFree(Boolean isFree) {
+        isAllMandatoryGuestFree = isFree;
+    }
+
+    public Boolean getIsAllMandatoryGuestFree() {
+        return isAllMandatoryGuestFree;
+    }
+
+    public void incrementNumOptionalGuestUnavailable() {
+        numOptionalGuestUnavailable ++;
+    }
+
+    public int getNumOptionalGuestUnavailable() {
+        return numOptionalGuestUnavailable;
+    } 
+
+    public void addUnavailableOptionalGuest(String guest) {
+        unavailableOptionalGuestList.add(guest);
+    }
+
+    public Boolean isInUnavailableOptionalGuestList(String guest) {
+        return unavailableOptionalGuestList.contains(guest);
+    }
 
 	public static TimeRangeAttendance fromStartEnd(int start, int end, boolean inclusive) {
 		return inclusive ? new TimeRangeAttendance(start, end - start + 1) : new TimeRangeAttendance(start, end - start);

@@ -47,11 +47,11 @@ public class TimeRangeManager {
     ArrayList<TimeRange> result = new ArrayList<>();
 
     for (TimeRangeAttendance timeRangeAttendance : timeRangeAttendanceListScored) {
-			if (timeRangeAttendance.isAllMandatoryGuestFree) {
-				if (timeRangeAttendance.numOptionalGuestUnavailable <= maxOptionalGuestUnavailableCount) {
-					result.add(timeRangeAttendance);
-				}
-			}
+        if (timeRangeAttendance.getIsAllMandatoryGuestFree()) {
+            if (timeRangeAttendance.getNumOptionalGuestUnavailable() <= maxOptionalGuestUnavailableCount) {
+                result.add(timeRangeAttendance);
+            }
+        }
     }
 
     return result;

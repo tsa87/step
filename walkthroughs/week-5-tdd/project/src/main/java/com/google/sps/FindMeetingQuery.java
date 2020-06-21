@@ -144,13 +144,13 @@ public final class FindMeetingQuery {
 					TimeRangeAttendance timeRangeAttendance = timeRangeAttendanceListScored.get(index);
 
           if (unavailableMandatoryAttendeeCount > 0) {
-            timeRangeAttendance.isAllMandatoryGuestFree = false;
+            timeRangeAttendance.setIsAllMandatoryGuestFree(false);
 					}
 					for (String attendee : unavailableOptionalAttendees) {
 						// avoid double counting an optional guest who signed up for 2 events in the same period
-						if (!(timeRangeAttendance.unavailableOptionalGuestList.contains(attendee))) {
-							timeRangeAttendance.numOptionalGuestUnavailable ++;
-							timeRangeAttendance.unavailableOptionalGuestList.add(attendee);
+						if (!(timeRangeAttendance.isInUnavailableOptionalGuestList(attendee))) {
+							timeRangeAttendance.incrementNumOptionalGuestUnavailable();
+							timeRangeAttendance.addUnavailableOptionalGuest(attendee);
 						}
 					}
 
@@ -184,11 +184,11 @@ public final class FindMeetingQuery {
         
         // If event duration spans more than 1 time slot
         // We should record the lowest availabilty score of the span.
-				Integer optionalGuestUnavailableCount = timeRangeAttendance.numOptionalGuestUnavailable;
+				Integer optionalGuestUnavailableCount = timeRangeAttendance.getNumOptionalGuestUnavailable();
         currentLoss = Math.max(currentLoss, optionalGuestUnavailableCount);  
 
 				isAllMandatoryGuestFree = 
-					timeRangeAttendance.isAllMandatoryGuestFree ? isAllMandatoryGuestFree : false;
+					timeRangeAttendance.getIsAllMandatoryGuestFree() ? isAllMandatoryGuestFree : false;
 		
         Integer timeSlotStartTime = timeRangeAttendance.start();
         Integer timeSlotEndTime = timeRangeAttendance.end();
