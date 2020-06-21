@@ -39,33 +39,25 @@ public final class FindMeetingQuery {
     ArrayList < TimeRangeAttendance > timeRangeAttendanceList = 
       getTimeRangeAttendanceList(events, attendees, optionalAttendees);
 
-    // minmumLoss is the number of optional guests unavailable if all mandatory guest can attend
-    // minmumLoss is positive infinity if mandatory guest cannot attend
-    Integer minimumLoss =
-      getMinimumTimeRangeLossMetric(timeRangeAttendanceList, duration);
+    // Return the the times slot with minmum amount of unavaiable optional guest
+    // No optional guest can attend if not all mandatory guest can attend
+    Integer minimumUnavaiableOptionalGuest = getMinimumUnavaiableOptionalGuest(timeRangeAttendanceList, duration);
 
-    // Availability Score need to surpass the threshold
-    // All mandatory guests must be able to attend.
-    // If no mandatory guests, at least 1 optional attendee should be there
-    Integer maxLossThreshold = Integer.MAX_VALUE;
-    if ((mandatoryAttendeeCount == 0) && (optionalAttendeeCount > 0)) {
-      maxLossThreshold = optionalAttendeeCount;
-    }
-    if (minimumLoss >= maxLossThreshold) {
-      return new ArrayList < > ();
+    if ((mandatoryAttendeeCount == 0) && (optionalAttendeeCount > 0) && (minimumUnavaiableOptionalGuest >= optionalAttendeeCount)) {
+      return new ArrayList<>(); 
     }
 
-    // Filter Time Ranges with a score higher than the minimum loss.
-    ArrayList < TimeRange > candidateTimeRangesFiltered = 
-      TimeRangeManager.filterScore(timeRangeAttendanceList, minimumLoss);
+    timeRangeAttendanceList.removeIf(timeRangeAttendance -> !timeRangeAttendance.getIsAllMandatoryGuestFree());
+    timeRangeAttendanceList.removeIf(timeRangeAttendance ->
+     timeRangeAttendance.getNumOptionalGuestUnavailable() > minimumUnavaiableOptionalGuest);
 
     // Merge Time Ranges that are consecutive or overlap 
-    ArrayList < TimeRange > candidateTimeRangesMerged = TimeRangeManager.mergeTimeRangeOverlap(candidateTimeRangesFiltered);
+    ArrayList< TimeRange > timeRangeList = new ArrayList< TimeRange > (timeRangeAttendanceList);
+    timeRangeList = TimeRangeManager.mergeTimeRangeOverlap(timeRangeList);
 
-    // Remove Time Ranges shorter than the required duration
-    ArrayList < TimeRange > candidateTimeRangesDuration = TimeRangeManager.filterDuration(candidateTimeRangesMerged, duration);
+    timeRangeList.removeIf(timeRange -> timeRange.duration() < duration);
 
-    return candidateTimeRangesDuration;
+    return timeRangeList;
   }
 
   /**
@@ -143,38 +135,35 @@ public final class FindMeetingQuery {
   }
 
   /* Return the best availability score of a time period over the duration length from a list of TimeRanges */
-  private Integer getMinimumTimeRangeLossMetric(
-    ArrayList < TimeRangeAttendance > timeRangeAttendanceListScored,
+  private Integer getMinimumUnavaiableOptionalGuest(
+    ArrayList < TimeRangeAttendance > timeRangeAttendanceList,
     long duration
   ) {
 
-    Integer timeRangeCount = timeRangeAttendanceListScored.size();
-    Integer minimumTimeRangeLoss = Integer.MAX_VALUE;
+    Integer timeRangeCount = timeRangeAttendanceList.size();
+    Integer minimumUnavaiableOptionalGuest = Integer.MAX_VALUE;
 
     for (Integer startIndex = 0; startIndex < timeRangeCount; startIndex++) {
 
       long durationRemaining = duration;
       Integer currentIndex = startIndex;
 
-      Integer currentLoss = 0;
+      Integer unavaiableOptionalGuest = 0;
       Boolean isAllMandatoryGuestFree = true;
 
       while ((durationRemaining > 0) && (currentIndex < timeRangeCount)) {
 
-        TimeRangeAttendance timeRangeAttendance = timeRangeAttendanceListScored.get(currentIndex);
+        TimeRangeAttendance timeRangeAttendance = timeRangeAttendanceList.get(currentIndex);
 
         // If event duration spans more than 1 time slot
-        // We should record the lowest availabilty score of the span.
-        Integer optionalGuestUnavailableCount = timeRangeAttendance.getNumOptionalGuestUnavailable();
-        currentLoss = Math.max(currentLoss, optionalGuestUnavailableCount);
+        // We should record the lowest availabilty score of the span
+        unavaiableOptionalGuest = Math.max(
+          unavaiableOptionalGuest, timeRangeAttendance.getNumOptionalGuestUnavailable());
 
         isAllMandatoryGuestFree =
           timeRangeAttendance.getIsAllMandatoryGuestFree() ? isAllMandatoryGuestFree : false;
 
-        Integer timeSlotStartTime = timeRangeAttendance.start();
-        Integer timeSlotEndTime = timeRangeAttendance.end();
-        Integer timeSlotLength = timeSlotEndTime - timeSlotStartTime;
-
+        Integer timeSlotLength = timeRangeAttendance.end() - timeRangeAttendance.start();
         durationRemaining -= timeSlotLength;
 
         currentIndex++;
@@ -184,14 +173,14 @@ public final class FindMeetingQuery {
       // with a starting time of TimeRange at startIndex or if not all
       // mandatory guest are free during some required TimeRanges.
       if ((durationRemaining > 0) || (!(isAllMandatoryGuestFree))) {
-        currentLoss = Integer.MAX_VALUE;
+        unavaiableOptionalGuest = Integer.MAX_VALUE;
       }
 
-      // Record the minimum loss we have achieved.
-      minimumTimeRangeLoss = Math.min(minimumTimeRangeLoss, currentLoss);
+      // Record the minimum Unavaiable Optional Guest we have achieved.
+      minimumUnavaiableOptionalGuest = Math.min(minimumUnavaiableOptionalGuest, unavaiableOptionalGuest);
     }
 
-    return minimumTimeRangeLoss;
+    return minimumUnavaiableOptionalGuest;
   }
 
   /* Count size of unions of the two attendee lists*/

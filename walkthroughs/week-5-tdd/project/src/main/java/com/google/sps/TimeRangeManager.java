@@ -12,11 +12,9 @@ public class TimeRangeManager {
 
   public static ArrayList < TimeRange > mergeTimeRangeOverlap(Collection < TimeRange > timeRanges) {
 
-    // Shallow copy of timeRanges
     ArrayList < TimeRange > mergedTimeRanges = new ArrayList < > ();
 
     for (TimeRange timeRange: timeRanges) {
-
       if (!isMergeable(mergedTimeRanges, timeRange)) {
         mergedTimeRanges.add(timeRange);
       }
@@ -29,7 +27,6 @@ public class TimeRangeManager {
         int newEnd = Math.max(lastTimeRange.end(), timeRange.end());
 
         Boolean isInclusive = (newEnd == TimeRange.END_OF_DAY);
-
         TimeRange mergedTimeRange = TimeRange.fromStartEnd(newStart, newEnd, isInclusive);
 
         mergedTimeRanges.set(size - 1, mergedTimeRange);
@@ -37,34 +34,6 @@ public class TimeRangeManager {
     }
 
     return mergedTimeRanges;
-  }
-
-  public static ArrayList < TimeRange > filterScore(
-    ArrayList < TimeRangeAttendance > timeRangeAttendanceListScored,
-    int maxOptionalGuestUnavailableCount
-  ) {
-
-    ArrayList < TimeRange > result = new ArrayList < > ();
-
-    for (TimeRangeAttendance timeRangeAttendance: timeRangeAttendanceListScored) {
-      if (timeRangeAttendance.getIsAllMandatoryGuestFree()) {
-        if (timeRangeAttendance.getNumOptionalGuestUnavailable() <= maxOptionalGuestUnavailableCount) {
-          result.add(timeRangeAttendance);
-        }
-      }
-    }
-
-    return result;
-  }
-
-  public static ArrayList < TimeRange > filterDuration(ArrayList < TimeRange > timeRanges, long duration) {
-    ArrayList < TimeRange > result = new ArrayList < > ();
-    for (TimeRange timeRange: timeRanges) {
-      if ((timeRange.end() - timeRange.start()) >= duration) {
-        result.add(timeRange);
-      }
-    }
-    return result;
   }
 
   /* Determine if new timerange ((overlaps with) or (is consecutive to)) the last one */
