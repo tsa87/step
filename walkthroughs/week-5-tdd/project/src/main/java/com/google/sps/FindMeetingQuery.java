@@ -35,17 +35,14 @@ public final class FindMeetingQuery {
     Integer mandatoryAttendeeCount = attendees.size();
     Integer optionalAttendeeCount = optionalAttendees.size();
 
-    // initalize a list of time ranges with attendance infomation
-    ArrayList < TimeRangeAttendance > timeRangeAttendanceList = getTimeRangeAttendanceList(events);
-
-    // Fill in attendance infomation
-    ArrayList < TimeRangeAttendance > timeRangeAttendanceListScored =
-      scoreTimeRangeAttendanceList(timeRangeAttendanceList, events, attendees, optionalAttendees);
+    // Initalize a list of time ranges with attendance infomation
+    ArrayList < TimeRangeAttendance > timeRangeAttendanceList = 
+      getTimeRangeAttendanceList(events, attendees, optionalAttendees);
 
     // minmumLoss is the number of optional guests unavailable if all mandatory guest can attend
     // minmumLoss is positive infinity if mandatory guest cannot attend
     Integer minimumLoss =
-      getMinimumTimeRangeLossMetric(timeRangeAttendanceListScored, duration);
+      getMinimumTimeRangeLossMetric(timeRangeAttendanceList, duration);
 
     // Availability Score need to surpass the threshold
     // All mandatory guests must be able to attend.
@@ -59,8 +56,8 @@ public final class FindMeetingQuery {
     }
 
     // Filter Time Ranges with a score higher than the minimum loss.
-    ArrayList < TimeRange > candidateTimeRangesFiltered = TimeRangeManager.filterScore(
-      timeRangeAttendanceListScored, minimumLoss);
+    ArrayList < TimeRange > candidateTimeRangesFiltered = 
+      TimeRangeManager.filterScore(timeRangeAttendanceList, minimumLoss);
 
     // Merge Time Ranges that are consecutive or overlap 
     ArrayList < TimeRange > candidateTimeRangesMerged = TimeRangeManager.mergeTimeRangeOverlap(candidateTimeRangesFiltered);
@@ -72,9 +69,13 @@ public final class FindMeetingQuery {
   }
 
   /**
-   * Returns a list of disjoInteger time ranges with uninitialised attendence value
+   * Returns a list of disjoInteger time ranges with initialised attendence value
    */
-  private ArrayList < TimeRangeAttendance > getTimeRangeAttendanceList(Collection < Event > events) {
+  private ArrayList < TimeRangeAttendance > getTimeRangeAttendanceList(
+    Collection < Event > events,
+    Collection < String > attendees,
+    Collection < String > optionalAttendees
+  ) {
 
     ArrayList < TimeRangeAttendance > timeRangeAttendanceList = new ArrayList < > ();
 
@@ -89,30 +90,16 @@ public final class FindMeetingQuery {
       significantEndTimes.add(endTime);
     }
 
-    Integer startTime = TimeRange.START_OF_DAY;
-    for (Integer endTime: significantEndTimes) {
-      if (endTime > startTime) {
-        Boolean isInclusive = (endTime == TimeRange.END_OF_DAY) ? true : false;
-        timeRangeAttendanceList.add(TimeRangeAttendance.fromStartEnd(startTime, endTime, isInclusive));
+    Integer begin = TimeRange.START_OF_DAY;
+    for (Integer end : significantEndTimes) {
+      if (end > begin) {
+        Boolean isInclusive = (end == TimeRange.END_OF_DAY) ? true : false;
+        timeRangeAttendanceList.add(TimeRangeAttendance.fromStartEnd(begin, end, isInclusive));
       }
-      startTime = endTime;
+      begin = end;
     }
 
-    return timeRangeAttendanceList;
-  }
-
-  private ArrayList < TimeRangeAttendance > scoreTimeRangeAttendanceList(
-    ArrayList < TimeRangeAttendance > timeRangeAttendanceList,
-    Collection < Event > events,
-    Collection < String > attendees,
-    Collection < String > optionalAttendees
-  ) {
-
     Comparator < TimeRangeAttendance > c = TimeRangeAttendance.ORDER_BY_START;
-    Collections.sort(timeRangeAttendanceList, c);
-
-    ArrayList < TimeRangeAttendance > timeRangeAttendanceListScored =
-      new ArrayList < TimeRangeAttendance > (timeRangeAttendanceList);
 
     for (Event event: events) {
       Integer startTime = event.getWhen().start();
@@ -127,15 +114,15 @@ public final class FindMeetingQuery {
       if ((unavailableOptionalAttendeeCount > 0) || (unavailableMandatoryAttendeeCount > 0)) {
 
         Integer startIndex =
-          Collections.binarySearch(timeRangeAttendanceListScored, new TimeRangeAttendance(startTime, 0), c);
+          Collections.binarySearch(timeRangeAttendanceList, new TimeRangeAttendance(startTime, 0), c);
         Integer endIndex =
-          Collections.binarySearch(timeRangeAttendanceListScored, new TimeRangeAttendance(endTime, 0), c);
+          Collections.binarySearch(timeRangeAttendanceList, new TimeRangeAttendance(endTime, 0), c);
 
         endIndex = endIndex < -1 ? Math.abs(endIndex) - 1 : endIndex;
 
         for (Integer index = startIndex; index < endIndex; index++) {
 
-          TimeRangeAttendance timeRangeAttendance = timeRangeAttendanceListScored.get(index);
+          TimeRangeAttendance timeRangeAttendance = timeRangeAttendanceList.get(index);
 
           if (unavailableMandatoryAttendeeCount > 0) {
             timeRangeAttendance.setIsAllMandatoryGuestFree(false);
@@ -148,11 +135,11 @@ public final class FindMeetingQuery {
             }
           }
 
-          timeRangeAttendanceListScored.set(index, timeRangeAttendance);
+          timeRangeAttendanceList.set(index, timeRangeAttendance);
         }
       }
     }
-    return timeRangeAttendanceListScored;
+    return timeRangeAttendanceList;
   }
 
   /* Return the best availability score of a time period over the duration length from a list of TimeRanges */

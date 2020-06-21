@@ -56,7 +56,7 @@ public class TimeRangeAttendance extends TimeRange {
   public static final Comparator < TimeRangeAttendance > ORDER_BY_START = new Comparator < TimeRangeAttendance > () {
     @Override
     public int compare(TimeRangeAttendance a, TimeRangeAttendance b) {
-      return Long.compare(a.start(), b.start());
+      return TimeRange.ORDER_BY_START.compare(a, b);
     }
   };
 
