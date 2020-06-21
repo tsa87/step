@@ -20,7 +20,7 @@ import java.util.Comparator;
  * Class representing a span of time, enforcing properties (e.g. start comes before end) and
  * providing methods to make ranges easier to work with (e.g. {@code overlaps}).
  */
-public final class TimeRange {
+public class TimeRange {
   public static final int START_OF_DAY = getTimeInMinutes(0, 0);
   public static final int END_OF_DAY = getTimeInMinutes(23, 59);
 
@@ -49,7 +49,7 @@ public final class TimeRange {
   private final int start;
   private final int duration;
 
-  private TimeRange(int start, int duration) {
+  protected TimeRange(int start, int duration) {
     this.start = start;
     this.duration = duration;
   }

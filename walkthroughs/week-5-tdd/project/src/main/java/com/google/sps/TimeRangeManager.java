@@ -1,6 +1,7 @@
 package com.google.sps;
 
 import com.google.sps.TimeRange;
+import com.google.sps.TimeRangeAttendance;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,18 +39,21 @@ public class TimeRangeManager {
     return mergedTimeRanges; 
   }
 
-  public static ArrayList<TimeRange> filterScore(ArrayList<Pair<TimeRange, Integer>> timeRangeScorePairs, int minScore) {
+  public static ArrayList<TimeRange> filterScore(
+    ArrayList<TimeRangeAttendance> timeRangeAttendanceListScored,
+    int maxOptionalGuestUnavailableCount
+  ) {
+
     ArrayList<TimeRange> result = new ArrayList<>();
-    for (Pair<TimeRange, Integer> timeRangeScorePair : timeRangeScorePairs) {
 
-      TimeRange timeRange = timeRangeScorePair.getValue0();
-      int score = timeRangeScorePair.getValue1();
-      
-      if (score >= minScore) {
-        result.add(timeRange);
-      }
-
+    for (TimeRangeAttendance timeRangeAttendance : timeRangeAttendanceListScored) {
+			if (timeRangeAttendance.isAllMandatoryGuestFree) {
+				if (timeRangeAttendance.numOptionalGuestUnavailable <= maxOptionalGuestUnavailableCount) {
+					result.add(timeRangeAttendance);
+				}
+			}
     }
+
     return result;
   }
 

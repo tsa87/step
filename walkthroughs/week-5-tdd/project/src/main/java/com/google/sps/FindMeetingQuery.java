@@ -16,21 +16,21 @@ package com.google.sps;
 
 import com.google.sps.Event;
 import com.google.sps.TimeRange;
+import com.google.sps.TimeRangeAttendance;
 import com.google.sps.TimeRangeManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;  
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.SortedMap;      
 import java.util.TreeMap;
 import org.javatuples.Pair;
 
 public final class FindMeetingQuery {
-
-  static final int UNAVAILABLE_GUEST_PENALTY = -1000000;
-  static final int UNAVAILABLE_OPTIONAL_GUEST_PENALTY = -1;
 
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
 
@@ -38,35 +38,35 @@ public final class FindMeetingQuery {
     Collection<String> optionalAttendees = request.getOptionalAttendees();
     long duration = request.getDuration();
 
-    int mandatoryAttendeeCount = attendees.size();
-    int optionalAttendeeCount = optionalAttendees.size();
+    Integer mandatoryAttendeeCount = attendees.size();
+    Integer optionalAttendeeCount = optionalAttendees.size();
 
-    // Initalize a dictionary <start time, availability score>
-    // StartTime (Integer) used as a key over TimeRange because subMap operation is much easier later on.
-    TreeMap<Integer, Integer> timeCutoffs = getTimeCutoffs(events);
+    // initalize a list of time ranges with attendance infomation
+    ArrayList<TimeRangeAttendance> timeRangeAttendanceList = getTimeRangeAttendanceList(events);
 
-    // Penalize each time periods score based on the availability of attendees.
-    TreeMap<Integer, Integer> timeCutoffScored = scoreTimeCutoffs(timeCutoffs, events, attendees, optionalAttendees);
-	  
-    // Covert timeCutOffs startTime to a TimeRange
-    ArrayList<Pair<TimeRange, Integer>> timeRangeScorePairList = treeMapToTimeRangeScorePairList(timeCutoffScored);
-    
-    // Find the best availability score we can achieve for time periods equal or longer than the required duration.
-    int bestAvailabilityScore = findBestAvailabilityScore(timeRangeScorePairList, duration);
+		// Fill in attendance infomation
+    ArrayList<TimeRangeAttendance> timeRangeAttendanceListScored = 
+			scoreTimeRangeAttendanceList(timeRangeAttendanceList, events, attendees, optionalAttendees);
+
+		// minmumLoss is the number of optional guests unavailable if all mandatory guest can attend
+		// minmumLoss is positive infinity if mandatory guest cannot attend
+    Integer minimumLoss = 
+			getMinimumTimeRangeLossMetric(timeRangeAttendanceListScored, duration);
 
     // Availability Score need to surpass the threshold
     // All mandatory guests must be able to attend.
     // If no mandatory guests, at least 1 optional attendee should be there
-    int minimumScoreThreshold = UNAVAILABLE_GUEST_PENALTY + 1;
+    Integer maxLossThreshold = Integer.MAX_VALUE;
     if ((mandatoryAttendeeCount == 0) && (optionalAttendeeCount > 0)) {
-        minimumScoreThreshold = optionalAttendeeCount*UNAVAILABLE_OPTIONAL_GUEST_PENALTY + 1;
+      maxLossThreshold = optionalAttendeeCount;
     }
-    if (bestAvailabilityScore < minimumScoreThreshold) {
-        return new ArrayList<>();
+    if (minimumLoss >= maxLossThreshold) {
+      return new ArrayList<>();
     }
 
-    // Filter Time Ranges with a score lower than the best availability score
-    ArrayList<TimeRange> candidateTimeRangesFiltered = TimeRangeManager.filterScore(timeRangeScorePairList, bestAvailabilityScore);
+    // Filter Time Ranges with a score higher than the minimum loss.
+    ArrayList<TimeRange> candidateTimeRangesFiltered = TimeRangeManager.filterScore(
+			timeRangeAttendanceListScored, minimumLoss);
    
     // Merge Time Ranges that are consecutive or overlap 
     ArrayList<TimeRange> candidateTimeRangesMerged = TimeRangeManager.mergeTimeRangeOverlap(candidateTimeRangesFiltered);
@@ -77,164 +77,152 @@ public final class FindMeetingQuery {
     return candidateTimeRangesDuration;
   }
 
-  /* Count size of unions of the two attendee lists*/
-  public static int countAttendeeOverlap(Collection<String> attendeeListA, Collection<String> attendeeListB) {
-    int count = 0;
-    for (String attendee : attendeeListA) {
-      if (attendeeListB.contains(attendee)) {
-        count++;
-      }
-    }
-    return count;
-  }
-
-  /* Return the best availability score of a time period over the duration length from a list of TimeRanges */
-  private int findBestAvailabilityScore(ArrayList<Pair<TimeRange, Integer>> timeRangeScorePairList, long duration) {
-
-    int timeSegmentCount = timeRangeScorePairList.size();
-    int bestAvailabilityScore = UNAVAILABLE_GUEST_PENALTY;
-
-    for (int startTimeSlotIndex = 0; startTimeSlotIndex < timeSegmentCount; startTimeSlotIndex++) {
-
-      long durationRemaining = duration;
-      int minScore = 0;
-      int currTimeSlotIndex = startTimeSlotIndex;
-      
-      while ((durationRemaining > 0) && (currTimeSlotIndex < timeSegmentCount)) {
-        
-        Pair<TimeRange, Integer> timeRangeScorePair = timeRangeScorePairList.get(currTimeSlotIndex);
-        TimeRange timeRange = timeRangeScorePair.getValue0();
-        int timeSlotScore = timeRangeScorePair.getValue1();
-        
-        // If event duration spans more than 1 time slot
-        // We should record the lowest availabilty score of the span.
-        minScore = Math.min(minScore, timeSlotScore);  
-
-        int timeSlotStartTime = timeRange.start();
-        int timeSlotEndTime = timeRange.end();
-        int timeSlotLength = timeSlotEndTime - timeSlotStartTime;
-
-        durationRemaining -= timeSlotLength;
-
-        currTimeSlotIndex++;
-      }
-
-      // We reached the end of the day
-      // but cannot find enough duration with a starting time of startTimeSlotIndex.
-      if (durationRemaining > 0) minScore = UNAVAILABLE_GUEST_PENALTY;
-
-      // Record the best score we have achieved.
-      bestAvailabilityScore = Math.max(bestAvailabilityScore, minScore);
-    }
-
-    return bestAvailabilityScore;
-  }
-
-  /* Return a list of TimeRange and associated Availability Score Pair from the previous TreeMap */
-  private ArrayList<Pair<TimeRange, Integer>> treeMapToTimeRangeScorePairList(TreeMap<Integer, Integer> timeCutoffs) {
-
-    ArrayList<Pair<TimeRange, Integer>> timeRangeScorePairList = new ArrayList<>();
-
-    Integer startTime = 0;
-    Integer score = timeCutoffs.get(startTime); 
-
-    // Edges padding for the subsequent forloop
-    for (Map.Entry<Integer,Integer> entry : timeCutoffs.entrySet()) {
-      Integer endTime = entry.getKey();
-      Integer nextScore = entry.getValue();
-
-      if (endTime > startTime) { //skip the first
-        Boolean isInclusive = (endTime == TimeRange.END_OF_DAY);
-        TimeRange timeRange = TimeRange.fromStartEnd(startTime, endTime, isInclusive);
-
-        Pair<TimeRange, Integer> timeRangeScorePair = Pair.with(timeRange, score);
-        timeRangeScorePairList.add(timeRangeScorePair);
-      }
-      
-      startTime = endTime;
-      score = nextScore;
-    }
-
-    return timeRangeScorePairList;
-  }
-
-  /**
-    * Initalize a sorted dictionary of start time and the associated score
-    * Example: 
-    *   if from 00:00 ~ 01:35, 5 optional guest can't attend
-    *   from 01:35 ~ 24:00 at least one mandatory guest can't attend
-    *
-    *   |-----(-5)-----|----------------(-100000)---------------|
-    *   00:00        01:35                                    24:00
-    *
-    *   timeCutoffs: {0: -5, 95: -100000}
-    *
-    * @return timeCutoffs [Dict]  
-    *           - Key [Int] represents StartTime
-    *           - Value [Int] represents score to schedule event at this time
+	/**
+    * Returns a list of disjoInteger time ranges with uninitialised attendence value
     */
-  private TreeMap<Integer, Integer> getTimeCutoffs(Collection<Event> events) {
+  private ArrayList<TimeRangeAttendance> getTimeRangeAttendanceList(Collection<Event> events) {
     
-    TreeMap<Integer, Integer> timeCutoffs = new TreeMap<>();
+    ArrayList<TimeRangeAttendance>  timeRangeAttendanceList = new ArrayList<>();
 
-    // Initalize Time Cutoff with 0's
-    timeCutoffs.put(TimeRange.START_OF_DAY, 0);
-    timeCutoffs.put(TimeRange.END_OF_DAY+1, 0);
+    TreeSet<Integer> significantEndTimes = new TreeSet<>();
 
+		significantEndTimes.add(TimeRange.END_OF_DAY);
     for (Event event : events) {
-      int startTime = event.getWhen().start();
-      int endTime = event.getWhen().end();
+      Integer startTime = event.getWhen().start();
+      Integer endTime = event.getWhen().end();
 
-      timeCutoffs.put(startTime, 0);
-      timeCutoffs.put(endTime, 0);
+      significantEndTimes.add(startTime); // The commencement of a new period marks the end of another period.
+      significantEndTimes.add(endTime);
     }
 
-    return timeCutoffs;
+		Integer startTime = TimeRange.START_OF_DAY;
+    for (Integer endTime : significantEndTimes) {
+			if (endTime > startTime) {
+				Boolean isInclusive = (endTime == TimeRange.END_OF_DAY) ? true : false;
+				timeRangeAttendanceList.add(TimeRangeAttendance.fromStartEnd(startTime, endTime, isInclusive));
+			}
+			startTime = endTime;
+    }
+
+    return timeRangeAttendanceList;
   }
 
-  /* Return a scored TreeMap based on the Final Penalties*/
-  private TreeMap<Integer, Integer> scoreTimeCutoffs(
-      TreeMap<Integer, Integer> timeCutoffs,
+	private ArrayList<TimeRangeAttendance> scoreTimeRangeAttendanceList(
+      ArrayList<TimeRangeAttendance> timeRangeAttendanceList,
       Collection<Event> events,
       Collection<String> attendees,
       Collection<String> optionalAttendees
-    ) {
+  ) {
+
+		Comparator<TimeRangeAttendance> c = TimeRangeAttendance.ORDER_BY_START;
+		Collections.sort(timeRangeAttendanceList, c);
+
+		ArrayList<TimeRangeAttendance> timeRangeAttendanceListScored = 
+			new ArrayList<TimeRangeAttendance>(timeRangeAttendanceList);
 
     for (Event event : events) {
-      int startTime = event.getWhen().start();
-      int endTime = event.getWhen().end();
+      Integer startTime = event.getWhen().start();
+      Integer endTime = event.getWhen().end();
 
-      int unavailableOptionalAttendeeCount = countAttendeeOverlap(event.getAttendees(), optionalAttendees);
-      int unavailableMandatoryAttendeeCount = countAttendeeOverlap(event.getAttendees(), attendees);
+      Collection<String> unavailableOptionalAttendees = getAttendeeOverlap(event.getAttendees(), optionalAttendees);
+      
+			Integer unavailableOptionalAttendeeCount = unavailableOptionalAttendees.size();
+			Integer unavailableMandatoryAttendeeCount = getAttendeeOverlap(event.getAttendees(), attendees).size();
 
       // Modify the the time ranges with penalties
       if ((unavailableOptionalAttendeeCount > 0) || (unavailableMandatoryAttendeeCount > 0)) {
 
-        SortedMap<Integer, Integer> eventTimePeriod = timeCutoffs.subMap(startTime, endTime);
+				Integer startIndex = 
+					Collections.binarySearch(timeRangeAttendanceListScored, new TimeRangeAttendance(startTime, 0), c); 
+				Integer endIndex = 
+					Collections.binarySearch(timeRangeAttendanceListScored, new TimeRangeAttendance(endTime, 0), c);
         
-        // Build list of keys to avoid concurrent edit
-        ArrayList<Integer> affectedTimes = new ArrayList<>();
-        for (Map.Entry<Integer,Integer> entry : eventTimePeriod.entrySet()) {
-          Integer cutoffStartTime = entry.getKey();
-          affectedTimes.add(cutoffStartTime);
-        }
+				endIndex = endIndex < -1 ? Math.abs(endIndex) - 1 : endIndex;
 
-        for (Integer cutoffStartTime : affectedTimes) {
-          int score = timeCutoffs.get(cutoffStartTime);
+        for (Integer index = startIndex; index < endIndex; index++) {
+					
+					TimeRangeAttendance timeRangeAttendance = timeRangeAttendanceListScored.get(index);
 
           if (unavailableMandatoryAttendeeCount > 0) {
-            // Most severe penalty if manadatory attendee cannot come.
-            score += UNAVAILABLE_GUEST_PENALTY; 
-          } else {
-            // -1 penalty per optional attendee
-            score += unavailableOptionalAttendeeCount * UNAVAILABLE_OPTIONAL_GUEST_PENALTY; 
-          }
+            timeRangeAttendance.isAllMandatoryGuestFree = false;
+					}
+					for (String attendee : unavailableOptionalAttendees) {
+						// avoid double counting an optional guest who signed up for 2 events in the same period
+						if (!(timeRangeAttendance.unavailableOptionalGuestList.contains(attendee))) {
+							timeRangeAttendance.numOptionalGuestUnavailable ++;
+							timeRangeAttendance.unavailableOptionalGuestList.add(attendee);
+						}
+					}
 
-          timeCutoffs.put(cutoffStartTime, score);
-        }
+					timeRangeAttendanceListScored.set(index, timeRangeAttendance);
+				}
       }
     }
-    return timeCutoffs;
+    return timeRangeAttendanceListScored;
   }
+  
+	/* Return the best availability score of a time period over the duration length from a list of TimeRanges */
+  private Integer getMinimumTimeRangeLossMetric(
+		ArrayList<TimeRangeAttendance> timeRangeAttendanceListScored, 
+		long duration
+	) {
 
+    Integer timeRangeCount = timeRangeAttendanceListScored.size();
+    Integer minimumTimeRangeLoss = Integer.MAX_VALUE;
+		
+    for (Integer startIndex = 0; startIndex < timeRangeCount; startIndex++) {
+
+      long durationRemaining = duration;
+      Integer currentIndex = startIndex;
+
+			Integer currentLoss = 0;
+			Boolean isAllMandatoryGuestFree = true;
+      
+      while ((durationRemaining > 0) && (currentIndex < timeRangeCount)) {
+        
+				TimeRangeAttendance timeRangeAttendance = timeRangeAttendanceListScored.get(currentIndex);
+        
+        // If event duration spans more than 1 time slot
+        // We should record the lowest availabilty score of the span.
+				Integer optionalGuestUnavailableCount = timeRangeAttendance.numOptionalGuestUnavailable;
+        currentLoss = Math.max(currentLoss, optionalGuestUnavailableCount);  
+
+				isAllMandatoryGuestFree = 
+					timeRangeAttendance.isAllMandatoryGuestFree ? isAllMandatoryGuestFree : false;
+		
+        Integer timeSlotStartTime = timeRangeAttendance.start();
+        Integer timeSlotEndTime = timeRangeAttendance.end();
+        Integer timeSlotLength = timeSlotEndTime - timeSlotStartTime;
+
+        durationRemaining -= timeSlotLength;
+
+        currentIndex ++;
+      }
+
+      // We reached the end of the day; If we cannot find enough duration 
+			// with a starting time of TimeRange at startIndex or if not all
+			// mandatory guest are free during some required TimeRanges.
+      if ((durationRemaining > 0) || (!(isAllMandatoryGuestFree))) {
+				currentLoss = Integer.MAX_VALUE;
+			} 
+
+      // Record the minimum loss we have achieved.
+      minimumTimeRangeLoss = Math.min(minimumTimeRangeLoss, currentLoss);
+    }
+
+    return minimumTimeRangeLoss;
+  }
+	
+	/* Count size of unions of the two attendee lists*/
+  public static Collection<String> getAttendeeOverlap(Collection<String> attendeeListA, Collection<String> attendeeListB) {
+		Collection<String> overlap = new ArrayList<>();
+
+    for (String attendee : attendeeListA) {
+      if (attendeeListB.contains(attendee)) {
+        overlap.add(attendee);
+      }
+    }
+
+    return overlap;
+  }
 }
